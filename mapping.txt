@@ -1,0 +1,6 @@
+lunch Breakfast;Dinner;Meal;DiningRoom;DiningRoom
+dinner Dinner;Meal;Breakfast;Toast;MeetingRoom
+break GetStartTimeCommand;GetStartTimeCommand;GetStartTimeCommand;StartStopPauseFunctionality;StartStopPauseFunctionality
+cooling HeatingAndCoolingUnit;HeatingAndCoolingUnit;HeatingAndCoolingUnit;StopHeatingCoolingNotification;StopHeatingCoolingNotification
+heating HeatingSystem;HeatingSystem;HeatingSystem;HeatingAndCoolingUnit;HeatingAndCoolingUnit
+sunny FreezingRain;rain-shower;rain-precipitation;Shade;Shade
