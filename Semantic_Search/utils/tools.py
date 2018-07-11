@@ -48,7 +48,7 @@ def split_phase(phase):
             splits = splits + simple_preprocess(one_unit)
 
         # and remove '_|-| '
-        splits = [re.sub('_|-| ', '', word) for word in splits]
+        splits = [re.sub('_|-| |(|)', '', word) for word in splits]
 
     return splits
 

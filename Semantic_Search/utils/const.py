@@ -26,21 +26,21 @@ dbow_model_file = 'model.dbow'
 dm_model_file = 'model.dm'
 
 '''fastText'''
-fasttext_model_filepath = '/Users/kun/Documents/py/thingin_recommender/Semantic_Search/models/fasttext/wiki.en.bin'
+fasttext_model_filepath = '/home/sw/NLP/fastText/models/wiki.en.bin'
 
 
 
 TOPICS = 400
 
-#
-# import logging, sys
-#
-# logger = logging.getLogger('')
-# logger.setLevel(logging.INFO)
-# fh = logging.FileHandler('/home/sw/NLP/process.log')
-# sh = logging.StreamHandler(sys.stdout)
-# formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
-# fh.setFormatter(formatter)
-# sh.setFormatter(formatter)
+
+import logging, sys
+
+logger = logging.getLogger('')
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler('/home/sw/NLP/process.log')
+sh = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
+fh.setFormatter(formatter)
+sh.setFormatter(formatter)
 # logger.addHandler(fh)
-# logger.addHandler(sh)
+logger.addHandler(sh)

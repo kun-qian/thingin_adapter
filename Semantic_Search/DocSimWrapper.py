@@ -73,9 +73,9 @@ def get_sentence_vector(sentence, method=1):
         try:
             vec = np.array([model[word] for word in split_phase(sentence)]).mean(axis=0)
             vec = matutils.unitvec(vec)
-        except KeyError:
+        except :
             logging.info('no existed word in sentence: {} in model: {}!'
-                         .format(sentence, methods[method - 1]))
+                         .format(sentence, methods[method]))
             # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
             return None
     elif method == 2:

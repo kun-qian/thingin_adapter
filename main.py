@@ -2,39 +2,58 @@ import logging
 
 import requests
 import time
-import re
+import re, os, pickle
 from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim
 
 logging.basicConfig(level=logging.INFO)
 
-try:
-    r = requests.get(
-        "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields=iri%2Cname&limit=500")
-    logging.info("received %s classes from thingin!" % len(r.json()))
-
-except requests.RequestException:
-    logging.info("can't get info from thingin!")
-    exit()
-
-classes = r.json()
-filter_keywords = 'command|notification|functionality|function|unit|system|status|state'
-classes = [c for c in classes if len(re.findall(filter_keywords, c['data']['name'].lower())) == 0]
-# remove duplicate iri class
-classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
-# print(classes)
-
+USECACHEDVECTOR = True
+cache_file_basic_name = 'cached_classes_name_IRI_vector_method{}.pkl'
 
 # method could be 1, 2, 3
 method = 2
-start = time.time()
-for c in classes:
-    vector = get_sentence_vector(c['name'], method)
-    c['vec'] = vector
 
-# print(classes)
+cache_file = cache_file_basic_name.format(method)
 
-keywords = ['lunch', 'dinner', 'drink', 'water', 'heating', 'sunny', 'cafe', 'temperature controller', 'tea', 'hungry',
-            'print', 'clean', 'charging']
+if USECACHEDVECTOR and os.path.exists(cache_file):
+    with open(cache_file, 'rb') as file:
+        start = time.time()
+        classes = pickle.load(file)
+        print(classes[:3])
+else:
+    try:
+        os.environ['http_proxy'] = 'http://10.193.250.16:8080/'
+        os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
+        r = requests.get(
+            "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields=iri%2Cname&limit=10000")
+        logging.info("received %s classes from thingin!" % len(r.json()))
+
+    except requests.RequestException:
+        logging.info("can't get info from thingin!")
+        exit()
+
+    classes = r.json()
+    filter_keywords = 'command|notification|functionality|function|unit|system|status|state|scheme|fragment|package' \
+                      '|specification'
+    classes = [c for c in classes if len(re.findall(filter_keywords, c['data']['name'].lower())) == 0]
+    # remove duplicate iri class
+    classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
+
+
+
+    start = time.time()
+    for c in classes:
+        vector = get_sentence_vector(c['name'], method)
+        c['vec'] = vector
+    print(classes[:3])
+
+    # write classes into local file for cache
+    with open(cache_file, 'wb') as file:
+        pickle.dump(classes, file)
+
+keywords = ['lunch', 'dinner', 'lunch dinner', 'drink', 'water', 'heater', 'air conditioner', 'sunny', 'cafe', 'temperature controller', 'tea', 'hungry',
+            'printer', 'cleaner', 'power charge', 'car wash', 'flower store', 'restaurant', 'theater', 'bicycle', 'park', 'playground',
+            'children playground', 'entertainment', 'bicycle station', 'bus station']
 
 
 def get_top_similar_classes(vec, classes, n, threshold=0):
