@@ -1,3 +1,4 @@
 Semantic_Search/models/
 Semantic_Search/__pycache__/
 .idea/
+db.sqlite3
