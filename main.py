@@ -1,7 +1,6 @@
 import logging
 
 import requests
-import time
 import re
 import os
 import pickle
@@ -74,7 +73,7 @@ keywords = ['a place to have dinner', 'cool down the temperature', 'cooling', 'd
             'children playground', 'entertainment', 'bicycle station', 'bus station']
 
 
-def get_top_similar_classes(vec, classes, n, threshold=0.341):
+def get_top_n_similar_classes(vec, classes, n, threshold=0):
     res = []
     for c in classes:
         class_vec = c['vec']
@@ -92,7 +91,7 @@ with open("mapping{}.txt".format(method), "w+") as f:
     for keyword in keywords:
         keyword_vec = get_sentence_vector(keyword, method - 1 if method % 2 == 0 else method)
         # keyword_vec = get_sentence_vector(keyword, method)
-        similar_classes = get_top_similar_classes(keyword_vec, classes, 5)
+        similar_classes = get_top_n_similar_classes(keyword_vec, classes, 5)
         print(similar_classes)
         similar_classes_str = ";".join(map(lambda x: x["class"], similar_classes))
         f.write(keyword + " " + similar_classes_str + "\r\n")

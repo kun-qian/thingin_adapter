@@ -1,8 +1,6 @@
-
 '''wiki data'''
 wiki_dump_file = '/home/sw/NLP/wiki_data/enwiki-20180601-pages-articles-multistream.xml.bz2'
 wiki_corups_file = '/home/sw/NLP/wiki_data/enwiki-20180601.corups'
-
 
 '''gensim NLP'''
 nlp_model_path = '/home/sw/NLP/wiki_data/model'
@@ -14,8 +12,8 @@ lda_model_file = 'model.lda'
 '''gensim Word2Vec'''
 w2v_model_path = '/home/sw/NLP/models/w2v_model/'
 w2v_model_files = ['GoogleNews-vectors-negative300.bin',
-               'glove.840B.300d.w2v.txt',
-               'glove.twitter.27B.50d.w2v.txt', 'glove.twitter.27B.100d.w2v.txt', 'glove.twitter.27B.200d.w2v.txt']
+                   'glove.840B.300d.w2v.txt',
+                   'glove.twitter.27B.50d.w2v.txt', 'glove.twitter.27B.100d.w2v.txt', 'glove.twitter.27B.200d.w2v.txt']
 w2v_model_choice = 1
 w2v_stopwords_path = "./data/stopwords_en.txt"
 
@@ -26,14 +24,12 @@ dbow_model_file = 'model.dbow'
 dm_model_file = 'model.dm'
 
 '''fastText'''
-fasttext_model_filepath = '/home/sw/NLP/fastText/models/wiki.en.bin'
-
-
+fasttext_model_filepath = '/../models/fasttext/wiki.en.bin'
 
 TOPICS = 400
 
-
-import logging, sys
+import logging
+import sys
 
 logger = logging.getLogger('')
 logger.setLevel(logging.INFO)

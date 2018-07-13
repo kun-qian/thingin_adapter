@@ -35,9 +35,11 @@ The following functions are for loading FastText models
 
 
 def load_FastText_model():
-    # if not os.path.exists(fasttext_model_filepath):
-    #     logging.error('no fastText model file in:' + fasttext_model_filepath)
-    #     return None
-    fmodel = fastText.load_model(fasttext_model_filepath)
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    model_dir = current_dir + fasttext_model_filepath
+    if not os.path.exists(model_dir):
+        logging.error('no fastText model file in:' + fasttext_model_filepath)
+        return None
+    fmodel = fastText.load_model(model_dir)
     logging.info('fastText model loaded!')
     return fmodel

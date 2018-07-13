@@ -5,6 +5,11 @@ name = "pypi"
 
 [packages]
 requests = "*"
+gensim = "==3.4.0"
+cython = "==0.28.3"
+click = "*"
+future = "*"
+django = "*"
 
 [dev-packages]
 
