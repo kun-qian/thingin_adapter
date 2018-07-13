@@ -7,11 +7,11 @@ from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim
 
 logging.basicConfig(level=logging.INFO)
 
-USECACHEDVECTOR = True
+USECACHEDVECTOR = False
 cache_file_basic_name = 'cached_classes_name_IRI_vector_method{}.pkl'
 
-# method could be 1, 2, 3
-method = 2
+# method could be 1, 2, 3, 4, 5, 6
+method = 6
 
 cache_file = cache_file_basic_name.format(method)
 
@@ -24,10 +24,15 @@ else:
     try:
         os.environ['http_proxy'] = 'http://10.193.250.16:8080/'
         os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
-        r = requests.get(
-            "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields=iri%2Cname&limit=10000")
+        if method % 2 == 0:
+            r = requests.get(
+                "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
+                "iri%2Cname%2Ccomment&limit=10000")
+        else:
+            r = requests.get(
+                "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
+                "iri%2Cname&limit=10000")
         logging.info("received %s classes from thingin!" % len(r.json()))
-
     except requests.RequestException:
         logging.info("can't get info from thingin!")
         exit()
@@ -36,27 +41,37 @@ else:
     filter_keywords = 'command|notification|functionality|function|unit|system|status|state|scheme|fragment|package' \
                       '|specification'
     classes = [c for c in classes if len(re.findall(filter_keywords, c['data']['name'].lower())) == 0]
+
+    # if consider the comments similarity, remove classes without comments
+    if method % 2 == 0:
+        classes = [c for c in classes if 'comment' in c['data'].keys()]
+        for c in classes:
+            c['data']['comment'] = re.sub('\n|\r', ' ', c['data']['comment'][0])
+        # print(classes[0])
+
     # remove duplicate iri class
     classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
 
-
-
+    data_key = 'name' if method % 2 == 1 else 'comment'
     start = time.time()
     for c in classes:
-        vector = get_sentence_vector(c['name'], method)
-        c['vec'] = vector
+        if data_key not in c.keys():
+            c['vec'] = None
+        else:
+            vector = get_sentence_vector(c[data_key], method)
+            c['vec'] = vector
     print(classes[:3])
 
     # write classes into local file for cache
     with open(cache_file, 'wb') as file:
         pickle.dump(classes, file)
 
-keywords = ['lunch', 'dinner', 'lunch dinner', 'drink', 'water', 'heater', 'air conditioner', 'sunny', 'cafe', 'temperature controller', 'tea', 'hungry',
+keywords = ['a place to have dinner', 'cool down the temperature', 'cooling', 'dinner', 'lunch dinner', 'drink', 'water', 'heater', 'air conditioner', 'sunny', 'cafe', 'temperature controller', 'tea', 'hungry',
             'printer', 'cleaner', 'power charge', 'car wash', 'flower store', 'restaurant', 'theater', 'bicycle', 'park', 'playground',
             'children playground', 'entertainment', 'bicycle station', 'bus station']
 
 
-def get_top_similar_classes(vec, classes, n, threshold=0):
+def get_top_similar_classes(vec, classes, n, threshold=0.341):
     res = []
     for c in classes:
         class_vec = c['vec']
@@ -72,9 +87,10 @@ def get_top_similar_classes(vec, classes, n, threshold=0):
 
 print("the time used for computing vector and sim is: " + str(time.time() - start))
 
-with open("mapping.txt", "w+") as f:
+with open("mapping{}.txt".format(method), "w+") as f:
     for keyword in keywords:
-        keyword_vec = get_sentence_vector(keyword, method)
+        keyword_vec = get_sentence_vector(keyword, method-1 if method % 2 == 0 else method)
+        # keyword_vec = get_sentence_vector(keyword, method)
         similar_classes = get_top_similar_classes(keyword_vec, classes, 5)
         print(similar_classes)
         similar_classes_str = ";".join(map(lambda x: x["class"], similar_classes))

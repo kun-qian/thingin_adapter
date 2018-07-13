@@ -2,17 +2,23 @@ import logging
 import numpy as np
 from gensim import matutils
 
-from .utils.const import d2v_model2_path
+from .utils.const import d2v_model2_path, d2v_model_path
 from .utils.tools import split_phase
-from .utils.preprocess import load_DM_model, load_FastText_model
+from .utils.preprocess import load_DM_model, load_FastText_model, load_DBOW_model
 
 FORDEV = False
 VECDIM = 10
 
-methods = {1: 'd2v_dm_words', 2: 'fasttext_words', 3: 'fasttext_sentence'}
+methods = {1: 'd2v_dm_names', 2: 'd2v_dm_comments', 3: 'd2v_dbow_names', 4:'d2v_dbow_comments', 5: 'fasttext_names', 6: 'fasttext_comments'}
+
+
+def dbow_model2_path(args):
+    pass
+
 
 if not FORDEV:
-    models = [load_DM_model(model_path=d2v_model2_path), load_FastText_model()]
+
+    models = [load_DM_model(model_path=d2v_model2_path), load_DBOW_model(model_path=d2v_model2_path), load_FastText_model()]
 
 
 def sensim(source, targets, method=1, threshhold=0):
@@ -67,9 +73,9 @@ def get_sentence_vector(sentence, method=1):
         return vec
 
 
-    model = models[0] if method == 1 else models[1]
+    model = models[int((method-1)/2)]
 
-    if method == 1:
+    if method in [1, 3]:
         try:
             vec = np.array([model[word] for word in split_phase(sentence)]).mean(axis=0)
             vec = matutils.unitvec(vec)
@@ -78,7 +84,7 @@ def get_sentence_vector(sentence, method=1):
                          .format(sentence, methods[method]))
             # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
             return None
-    elif method == 2:
+    elif method == 5:
         print(sentence)
         splits = split_phase(sentence)
         if len(splits) == 0:
@@ -86,8 +92,16 @@ def get_sentence_vector(sentence, method=1):
         else:
             vec = np.array([model.get_word_vector(word) for word in splits]).mean(axis=0)
             vec = matutils.unitvec(vec)
-    elif method == 3:
+    elif method == 6:
         vec = matutils.unitvec(model.get_sentence_vector(sentence))
+    elif method in [2, 4]:
+        try:
+            vec = model.infer_vector(doc_words=split_phase(sentence), alpha=0.1, min_alpha=0.0001, steps=20)
+            vec = matutils.unitvec(vec)
+        except:
+            logging.info('fail to infer vector of sentence: {}!'.format(sentence))
+            # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
+            return None
 
     return vec
 

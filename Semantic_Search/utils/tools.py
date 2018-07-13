@@ -53,6 +53,8 @@ def split_phase(phase):
     return splits
 
 
+
+
 if __name__ == '__main__':
     str = "it is time for WorldCup! Isn't it great? I want a-cup-of-coffee, do you want a hello_Kitty!"
     # str = split_doc(str)
