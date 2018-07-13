@@ -1,0 +1,13 @@
+.DS_Store
+.dockerignore
+.git/
+.gitignore
+README.rst
+README.md
+*.pyc
+__pycache__
+
+.idea/
+Pipfile
+Pipfile.lock
+db.sqlite3
