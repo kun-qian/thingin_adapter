@@ -9,7 +9,8 @@ from .utils.preprocess import load_DM_model, load_FastText_model, load_DBOW_mode
 FORDEV = False
 VECDIM = 10
 
-methods = {1: 'd2v_dm_names', 2: 'd2v_dm_comments', 3: 'd2v_dbow_names', 4:'d2v_dbow_comments', 5: 'fasttext_names', 6: 'fasttext_comments'}
+methods = {1: 'd2v_dm_names', 2: 'd2v_dm_comments', 3: 'd2v_dbow_names', 4: 'd2v_dbow_comments', 5: 'fasttext_names',
+           6: 'fasttext_comments'}
 
 
 def dbow_model2_path(args):
@@ -17,8 +18,8 @@ def dbow_model2_path(args):
 
 
 if not FORDEV:
-
-    models = [load_DM_model(model_path=d2v_model2_path), load_DBOW_model(model_path=d2v_model2_path), load_FastText_model()]
+    models = [load_DM_model(model_path=d2v_model2_path), load_DBOW_model(model_path=d2v_model2_path),
+              load_FastText_model()]
 
 
 def sensim(source, targets, method=1, threshhold=0):
@@ -72,14 +73,13 @@ def get_sentence_vector(sentence, method=1):
         vec = matutils.unitvec(vec)
         return vec
 
-
-    model = models[int((method-1)/2)]
+    model = models[int((method - 1) / 2)]
 
     if method in [1, 3]:
         try:
             vec = np.array([model[word] for word in split_phase(sentence)]).mean(axis=0)
             vec = matutils.unitvec(vec)
-        except :
+        except:
             logging.info('no existed word in sentence: {} in model: {}!'
                          .format(sentence, methods[method]))
             # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
