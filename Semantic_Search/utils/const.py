@@ -26,7 +26,7 @@ dbow_model_file = 'model.dbow'
 dm_model_file = 'model.dm'
 
 '''fastText'''
-fasttext_model_filepath = '/Users/kun/Documents/py/thingin_recommender/Semantic_Search/models/fasttext/wiki.en.bin'
+fasttext_model_filepath = '/../models/fasttext/wiki.en.bin'
 
 
 
