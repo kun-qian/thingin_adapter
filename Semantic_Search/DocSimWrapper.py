@@ -6,22 +6,12 @@ from .utils.const import d2v_model2_path, d2v_model_path
 from .utils.tools import split_phase
 from .utils.preprocess import load_DM_model, load_FastText_model, load_DBOW_model
 
+from const import D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, \
+    D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
+    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, methods
+
 FORDEV = False
 VECDIM = 10
-
-D2V_DM_NAMES_METHOD = 1
-D2V_DM_COMMENTS_METHOD = 2
-D2V_DBOW_NAMES_METHOD = 3
-D2V_DBOW_COMMENTS_METHOD = 4
-FASTTEXT_NAMES_METHOD = 5
-FASTTEXT_COMMENTS_METHOD = 6
-
-methods = {D2V_DM_NAMES_METHOD: 'd2v_dm_names',
-           D2V_DM_COMMENTS_METHOD: 'd2v_dm_comments',
-           D2V_DBOW_NAMES_METHOD: 'd2v_dbow_names',
-           D2V_DBOW_COMMENTS_METHOD: 'd2v_dbow_comments',
-           FASTTEXT_NAMES_METHOD: 'fasttext_names',
-           FASTTEXT_COMMENTS_METHOD: 'fasttext_comments'}
 
 
 def dbow_model2_path(args):

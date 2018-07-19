@@ -5,8 +5,8 @@ import re
 import os
 import pickle
 from const import SEPARATOR, KEY_VALUE_SEPARATOR
-from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim, methods, \
-    D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
+from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim
+from const import methods, D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
     FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD
 
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +15,7 @@ USE_CACHED_VECTOR = True
 CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'
 
 # use COMMENTS if method is even, use NAMES if odd
-method = FASTTEXT_COMMENTS_METHOD
+method = FASTTEXT_NAMES_METHOD
 
 cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
 
@@ -79,7 +79,7 @@ keywords = ['a place to have dinner', 'cool down the temperature', 'cooling', 'd
             'children playground', 'entertainment', 'bicycle station', 'bus station']
 
 
-def get_top_n_similar_classes(vec, classes, n, threshold=0):
+def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
     res = []
     for c in classes:
         class_vec = c['vec']
@@ -97,7 +97,7 @@ with open("mapping_{}.txt".format(methods[method]), "w+") as f:
     for keyword in keywords:
         keyword_vec = get_sentence_vector(keyword, method)
         # keyword_vec = get_sentence_vector(keyword, method)
-        similar_classes = get_top_n_similar_classes(keyword_vec, classes, 5)
+        similar_classes = get_top_n_similar_classes(keyword_vec, classes)
         print(similar_classes)
         similar_classes_str = ";".join(map(lambda x: x["name"] + SEPARATOR + x["class"] + SEPARATOR + str(x["similarity"]), similar_classes))
         f.write(keyword + KEY_VALUE_SEPARATOR + similar_classes_str + "\r\n")

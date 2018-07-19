@@ -22,8 +22,11 @@ def get_recommendations(request):
             return JsonResponse(res)
 
         keywords = params.get('keywords')
+        top_n = params.get('top_n', 3)
+        threshold = params.get('threshold', 0)
+        method = params.get('method', 5)
         if keywords is not None and len(keywords) > 0:
-            mapping = get_recommendations_from_keywords(keywords)
+            mapping = get_recommendations_from_keywords(keywords, top_n, threshold, method)
             res['code'] = 200
             res['res'] = mapping
         else:
