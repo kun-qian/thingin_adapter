@@ -4,19 +4,23 @@ import requests
 import re
 import os
 import pickle
-from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim
+from const import SEPARATOR, KEY_VALUE_SEPARATOR
+from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim, methods, \
+    D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
+    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD
 
 logging.basicConfig(level=logging.INFO)
 
-USE_CACHED_VECTOR = False
-cache_file_basic_name = 'cached_classes_name_IRI_vector_method{}.pkl'
+USE_CACHED_VECTOR = True
+CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'
 
-# method could be 1, 2, 3, 4, 5, 6
-method = 6
+# use COMMENTS if method is even, use NAMES if odd
+method = FASTTEXT_COMMENTS_METHOD
 
-cache_file = cache_file_basic_name.format(method)
+cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
 
 if USE_CACHED_VECTOR and os.path.exists(cache_file):
+    logging.info("loading cache file to get vectors of classes")
     with open(cache_file, 'rb') as file:
         classes = pickle.load(file)
         print(classes[:3])
@@ -24,11 +28,13 @@ else:
     try:
         # os.environ['http_proxy'] = 'http://10.193.250.16:8080/'
         # os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
+
+        # retrieve classes with comments
         if method % 2 == 0:
             r = requests.get(
                 "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
                 "iri%2Cname%2Ccomment&limit=10000")
-        else:
+        else:  # retrieve classes just with name
             r = requests.get(
                 "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
                 "iri%2Cname&limit=10000")
@@ -87,11 +93,11 @@ def get_top_n_similar_classes(vec, classes, n, threshold=0):
     return res[:n]
 
 
-with open("mapping{}.txt".format(method), "w+") as f:
+with open("mapping_{}.txt".format(methods[method]), "w+") as f:
     for keyword in keywords:
-        keyword_vec = get_sentence_vector(keyword, method - 1 if method % 2 == 0 else method)
+        keyword_vec = get_sentence_vector(keyword, method)
         # keyword_vec = get_sentence_vector(keyword, method)
         similar_classes = get_top_n_similar_classes(keyword_vec, classes, 5)
         print(similar_classes)
-        similar_classes_str = ";".join(map(lambda x: x["class"], similar_classes))
-        f.write(keyword + " " + similar_classes_str + "\r\n")
+        similar_classes_str = ";".join(map(lambda x: x["name"] + SEPARATOR + x["class"] + SEPARATOR + str(x["similarity"]), similar_classes))
+        f.write(keyword + KEY_VALUE_SEPARATOR + similar_classes_str + "\r\n")

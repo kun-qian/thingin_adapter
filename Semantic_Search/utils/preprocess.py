@@ -12,20 +12,24 @@ The following functions are for training and loading Doc2Vec models
 
 
 def load_DBOW_model(model_path=d2v_model_path, model_file=dbow_model_file):
+    current_dir = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(model_path, model_file)
-    if not os.path.exists(filename):
-        logging.error('no LDA model file in:' + filename)
+    model_dir = current_dir + filename
+    if not os.path.exists(model_dir):
+        logging.error('no LDA model file in:' + model_dir)
         return None
-    dbow = Doc2Vec.load(filename)
+    dbow = Doc2Vec.load(model_dir)
     return dbow
 
 
 def load_DM_model(model_path=d2v_model_path, model_file=dm_model_file):
+    current_dir = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(model_path, model_file)
-    if not os.path.exists(filename):
-        logging.error('no LDA model file in:' + filename)
+    model_dir = current_dir + filename
+    if not os.path.exists(model_dir):
+        logging.error('no LDA model file in:' + model_dir)
         return None
-    dbow = Doc2Vec.load(filename)
+    dbow = Doc2Vec.load(model_dir)
     return dbow
 
 

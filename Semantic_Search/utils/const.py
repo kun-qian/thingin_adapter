@@ -18,8 +18,8 @@ w2v_model_choice = 1
 w2v_stopwords_path = "./data/stopwords_en.txt"
 
 '''gensim Doc2Vec'''
-d2v_model_path = '/home/sw/NLP/models/d2v_model/d2v_model_v1'
-d2v_model2_path = '/home/sw/NLP/models/d2v_model/d2v_model_v2'
+d2v_model_path = '/../models/d2v_model/d2v_model_v1'
+d2v_model2_path = '/../models/d2v_model/d2v_model_v2'
 dbow_model_file = 'model.dbow'
 dm_model_file = 'model.dm'
 
@@ -31,12 +31,12 @@ TOPICS = 400
 import logging
 import sys
 
-logger = logging.getLogger('')
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler('/home/sw/NLP/process.log')
-sh = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
-fh.setFormatter(formatter)
-sh.setFormatter(formatter)
-# logger.addHandler(fh)
-logger.addHandler(sh)
+# logger = logging.getLogger('')
+# logger.setLevel(logging.INFO)
+# fh = logging.FileHandler('/home/sw/NLP/process.log')
+# sh = logging.StreamHandler(sys.stdout)
+# formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
+# fh.setFormatter(formatter)
+# sh.setFormatter(formatter)
+# # logger.addHandler(fh)
+# logger.addHandler(sh)

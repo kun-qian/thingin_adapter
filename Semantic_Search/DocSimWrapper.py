@@ -9,8 +9,19 @@ from .utils.preprocess import load_DM_model, load_FastText_model, load_DBOW_mode
 FORDEV = False
 VECDIM = 10
 
-methods = {1: 'd2v_dm_names', 2: 'd2v_dm_comments', 3: 'd2v_dbow_names', 4: 'd2v_dbow_comments', 5: 'fasttext_names',
-           6: 'fasttext_comments'}
+D2V_DM_NAMES_METHOD = 1
+D2V_DM_COMMENTS_METHOD = 2
+D2V_DBOW_NAMES_METHOD = 3
+D2V_DBOW_COMMENTS_METHOD = 4
+FASTTEXT_NAMES_METHOD = 5
+FASTTEXT_COMMENTS_METHOD = 6
+
+methods = {D2V_DM_NAMES_METHOD: 'd2v_dm_names',
+           D2V_DM_COMMENTS_METHOD: 'd2v_dm_comments',
+           D2V_DBOW_NAMES_METHOD: 'd2v_dbow_names',
+           D2V_DBOW_COMMENTS_METHOD: 'd2v_dbow_comments',
+           FASTTEXT_NAMES_METHOD: 'fasttext_names',
+           FASTTEXT_COMMENTS_METHOD: 'fasttext_comments'}
 
 
 def dbow_model2_path(args):
@@ -18,8 +29,12 @@ def dbow_model2_path(args):
 
 
 if not FORDEV:
-    models = [load_DM_model(model_path=d2v_model2_path), load_DBOW_model(model_path=d2v_model2_path),
-              load_FastText_model()]
+    models = {D2V_DM_NAMES_METHOD: load_DM_model(model_path=d2v_model2_path),
+              D2V_DM_COMMENTS_METHOD: load_DM_model(model_path=d2v_model2_path),
+              D2V_DBOW_NAMES_METHOD: load_DBOW_model(model_path=d2v_model2_path),
+              D2V_DBOW_COMMENTS_METHOD: load_DBOW_model(model_path=d2v_model2_path),
+              FASTTEXT_NAMES_METHOD: load_FastText_model(),
+              FASTTEXT_COMMENTS_METHOD: load_FastText_model()}
 
 
 def sensim(source, targets, method=1, threshhold=0):
@@ -58,12 +73,12 @@ def sensim(source, targets, method=1, threshhold=0):
     return sims
 
 
-def get_sentence_vector(sentence, method=1):
+def get_sentence_vector(sentence, method=D2V_DBOW_NAMES_METHOD):
     '''
 
     :param sentence:
     :param method:
-    :return: a vector for this sentence, if failed, throw KeyError exception which need to be handle
+    :return: a vector for this sentence, if failed, throw KeyError exception which need to be handled
     '''
 
     # assert isinstance(sentence, str) and 0 < method <= len(models)
@@ -73,9 +88,9 @@ def get_sentence_vector(sentence, method=1):
         vec = matutils.unitvec(vec)
         return vec
 
-    model = models[int((method - 1) / 2)]
+    model = models[method]
 
-    if method in [1, 3]:
+    if method in [D2V_DM_NAMES_METHOD, D2V_DBOW_NAMES_METHOD]:
         try:
             vec = np.array([model[word] for word in split_phase(sentence)]).mean(axis=0)
             vec = matutils.unitvec(vec)
@@ -84,7 +99,7 @@ def get_sentence_vector(sentence, method=1):
                          .format(sentence, methods[method]))
             # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
             return None
-    elif method == 5:
+    elif method == FASTTEXT_NAMES_METHOD:
         print(sentence)
         splits = split_phase(sentence)
         if len(splits) == 0:
@@ -92,9 +107,9 @@ def get_sentence_vector(sentence, method=1):
         else:
             vec = np.array([model.get_word_vector(word) for word in splits]).mean(axis=0)
             vec = matutils.unitvec(vec)
-    elif method == 6:
+    elif method == FASTTEXT_COMMENTS_METHOD:
         vec = matutils.unitvec(model.get_sentence_vector(sentence))
-    elif method in [2, 4]:
+    elif method in [D2V_DM_COMMENTS_METHOD, D2V_DBOW_COMMENTS_METHOD]:
         try:
             vec = model.infer_vector(doc_words=split_phase(sentence), alpha=0.1, min_alpha=0.0001, steps=20)
             vec = matutils.unitvec(vec)
