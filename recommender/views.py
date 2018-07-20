@@ -13,7 +13,7 @@ from .utils import get_recommendations_from_keywords
 def get_recommendations(request):
     if request.method == 'POST':
         res = {}
-        body = request.body
+        body = request.body.decode('utf-8')
         try:
             params = json.loads(body)
         except JSONDecodeError:
