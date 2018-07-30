@@ -1,4 +1,5 @@
 import logging
+import time
 
 import requests
 import re
@@ -76,7 +77,7 @@ keywords = ['a place to have dinner', 'cool down the temperature', 'cooling', 'd
             'water', 'heater', 'air conditioner', 'sunny', 'cafe', 'temperature controller', 'tea', 'hungry',
             'printer', 'cleaner', 'power charge', 'car wash', 'flower store', 'restaurant', 'theater', 'bicycle',
             'park', 'playground',
-            'children playground', 'entertainment', 'bicycle station', 'bus station']
+            'children playground', 'entertainment', 'bicycle station', 'bus station', 'dish cleaner']
 
 
 def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
@@ -95,8 +96,10 @@ def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
 
 with open("mapping_{}.txt".format(methods[method]), "w+") as f:
     for keyword in keywords:
-        keyword_vec = get_sentence_vector(keyword, method)
         # keyword_vec = get_sentence_vector(keyword, method)
+
+        # just use word2vec method to calcualte the vector or a keyword
+        keyword_vec = get_sentence_vector(keyword, method - 1 if method % 2 == 0 else method)
         similar_classes = get_top_n_similar_classes(keyword_vec, classes)
         print(similar_classes)
         similar_classes_str = ";".join(map(lambda x: x["name"] + SEPARATOR + x["class"] + SEPARATOR + str(x["similarity"]), similar_classes))
