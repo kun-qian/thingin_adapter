@@ -65,8 +65,6 @@ else:
         if data_key not in c.keys():
             c['vec'] = None
         else:
-            if c[data_key] in['Olympus_C-770_Movie', 'Stone_and_muller', 'NKE_TIC_Harversting_300']:
-                print(c[data_key])
             vector = get_sentence_vector(c[data_key], method)
             c['vec'] = vector
     # print(classes[:3])
