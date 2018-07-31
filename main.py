@@ -1,4 +1,5 @@
 import logging
+import time
 
 import requests
 import re
@@ -7,7 +8,7 @@ import pickle
 from const import SEPARATOR, KEY_VALUE_SEPARATOR
 from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim
 from const import methods, D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
-    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD
+    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, W2V_GOOGLE_NAMES_METHOD, W2V_GLOVE_NAMES_METHOD
 
 logging.basicConfig(level=logging.INFO)
 
@@ -15,7 +16,7 @@ USE_CACHED_VECTOR = True
 CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'
 
 # use COMMENTS if method is even, use NAMES if odd
-method = FASTTEXT_NAMES_METHOD
+method = FASTTEXT_COMMENTS_METHOD
 
 cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
 
@@ -75,8 +76,8 @@ else:
 keywords = ['a place to have dinner', 'cool down the temperature', 'cooling', 'dinner', 'lunch dinner', 'drink',
             'water', 'heater', 'air conditioner', 'sunny', 'cafe', 'temperature controller', 'tea', 'hungry',
             'printer', 'cleaner', 'power charge', 'car wash', 'flower store', 'restaurant', 'theater', 'bicycle',
-            'park', 'playground',
-            'children playground', 'entertainment', 'bicycle station', 'bus station']
+            'park', 'playground', 'coffee',
+            'children playground', 'entertainment', 'bicycle station', 'bus station', 'dish cleaner']
 
 
 def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
@@ -95,8 +96,10 @@ def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
 
 with open("mapping_{}.txt".format(methods[method]), "w+") as f:
     for keyword in keywords:
-        keyword_vec = get_sentence_vector(keyword, method)
         # keyword_vec = get_sentence_vector(keyword, method)
+
+        # just use word2vec method to calcualte the vector or a keyword
+        keyword_vec = get_sentence_vector(keyword, method - 1 if method % 2 == 0 else method)
         similar_classes = get_top_n_similar_classes(keyword_vec, classes)
         print(similar_classes)
         similar_classes_str = ";".join(map(lambda x: x["name"] + SEPARATOR + x["class"] + SEPARATOR + str(x["similarity"]), similar_classes))
