@@ -2,9 +2,7 @@ import logging
 import numpy as np
 from gensim import matutils
 
-from .utils.const import d2v_model_path
 from .utils.tools import split_phase
-from .utils.preprocess import load_DM_model, load_FastText_model, load_DBOW_model, load_w2v_model
 
 from const import D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, \
     D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
