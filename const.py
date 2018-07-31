@@ -21,3 +21,9 @@ methods = {D2V_DM_NAMES_METHOD: 'd2v_dm_names',
            FASTTEXT_COMMENTS_METHOD: 'fasttext_comments',
            W2V_GOOGLE_NAMES_METHOD: 'w2v_google_names',
            W2V_GLOVE_NAMES_METHOD: 'w2v_glove_names'}
+
+global d2v_dm_model
+global d2v_dbow_model
+global fasttext_model
+global w2v_google_model
+global w2v_glove_model

@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 from gensim import matutils
-
+import const
 from .utils.tools import split_phase
 
 from const import D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, \
@@ -18,11 +18,11 @@ def dbow_model2_path(args):
 
 
 if not FORDEV:
-    dm_model = d2v_dm_model
-    dbow_model = d2v_dbow_model  # load_DBOW_model(model_path=d2v_model2_path)
-    fasttext_model = fasttext_model
-    w2v_google_model = w2v_google_model  # load_w2v_model(model_choice='google')
-    w2v_glove_model = w2v_glove_model  # load_w2v_model(model_choice='glove')
+    dm_model = const.d2v_dm_model
+    dbow_model = const.d2v_dbow_model  # load_DBOW_model(model_path=d2v_model2_path)
+    fasttext_model = const.fasttext_model
+    w2v_google_model = const.w2v_google_model  # load_w2v_model(model_choice='google')
+    w2v_glove_model = const.w2v_glove_model  # load_w2v_model(model_choice='glove')
 
     models = {D2V_DM_NAMES_METHOD: dm_model,
               D2V_DM_COMMENTS_METHOD: dm_model,
