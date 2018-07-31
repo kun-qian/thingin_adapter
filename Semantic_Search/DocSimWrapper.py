@@ -4,11 +4,12 @@ from gensim import matutils
 
 from .utils.const import d2v_model2_path, d2v_model_path
 from .utils.tools import split_phase
-from .utils.preprocess import load_DM_model, load_FastText_model, load_DBOW_model
+from .utils.preprocess import load_DM_model, load_FastText_model, load_DBOW_model, load_w2v_model
 
 from const import D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, \
     D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
-    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, methods
+    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, methods, W2V_GOOGLE_NAMES_METHOD, \
+    W2V_GLOVE_NAMES_METHOD
 
 FORDEV = False
 VECDIM = 10
@@ -19,12 +20,20 @@ def dbow_model2_path(args):
 
 
 if not FORDEV:
-    models = {D2V_DM_NAMES_METHOD: load_DM_model(model_path=d2v_model2_path),
-              D2V_DM_COMMENTS_METHOD: load_DM_model(model_path=d2v_model2_path),
-              D2V_DBOW_NAMES_METHOD: load_DBOW_model(model_path=d2v_model2_path),
-              D2V_DBOW_COMMENTS_METHOD: load_DBOW_model(model_path=d2v_model2_path),
-              FASTTEXT_NAMES_METHOD: load_FastText_model(),
-              FASTTEXT_COMMENTS_METHOD: load_FastText_model()}
+    dm_model = None # load_DM_model(model_path=d2v_model2_path)
+    dbow_model = None # load_DBOW_model(model_path=d2v_model2_path)
+    fasttext_model = load_FastText_model()
+    w2v_google_model = None # load_w2v_model(model_choice='google')
+    w2v_glove_model = None #load_w2v_model(model_choice='glove')
+
+    models = {D2V_DM_NAMES_METHOD: dm_model,
+              D2V_DM_COMMENTS_METHOD: dm_model,
+              D2V_DBOW_NAMES_METHOD: dbow_model,
+              D2V_DBOW_COMMENTS_METHOD: dbow_model,
+              FASTTEXT_NAMES_METHOD: fasttext_model,
+              FASTTEXT_COMMENTS_METHOD: fasttext_model,
+              W2V_GOOGLE_NAMES_METHOD: w2v_google_model,
+              W2V_GLOVE_NAMES_METHOD: w2v_glove_model}
 
 
 def sensim(source, targets, method=1, threshhold=0):
@@ -80,7 +89,7 @@ def get_sentence_vector(sentence, method=D2V_DBOW_NAMES_METHOD):
 
     model = models[method]
 
-    if method in [D2V_DM_NAMES_METHOD, D2V_DBOW_NAMES_METHOD]:
+    if method in [D2V_DM_NAMES_METHOD, D2V_DBOW_NAMES_METHOD, W2V_GOOGLE_NAMES_METHOD, W2V_GLOVE_NAMES_METHOD]:
         try:
             vec = np.array([model[word] for word in split_phase(sentence)]).mean(axis=0)
             vec = matutils.unitvec(vec)

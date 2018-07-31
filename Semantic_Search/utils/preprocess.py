@@ -3,8 +3,31 @@ import logging
 import os
 
 from gensim.models.doc2vec import Doc2Vec
+from gensim.models import KeyedVectors
 
 from .const import *
+
+
+'''
+The following functions are for training and loading Word2Vec models
+'''
+
+
+def load_w2v_model(model_path=w2v_model_path, model_choice='google'):
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    filename = os.path.join(model_path, w2v_model_files[0] if model_choice == 'google' else w2v_model_files[1])
+    model_dir = current_dir + filename
+
+    if not os.path.exists(model_dir):
+        logging.error('no LDA model file in:' + model_dir)
+        return None
+
+    if model_choice == 'google':
+        w2v_model = KeyedVectors.load_word2vec_format(model_dir, binary=True)
+    else:
+        w2v_model = KeyedVectors.load_word2vec_format(model_dir, binary=False)
+    return w2v_model
+
 
 '''
 The following functions are for training and loading Doc2Vec models

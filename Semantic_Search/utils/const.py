@@ -10,12 +10,9 @@ lsi_model_file = 'model.lsi'
 lda_model_file = 'model.lda'
 
 '''gensim Word2Vec'''
-w2v_model_path = '/home/sw/NLP/models/w2v_model/'
-w2v_model_files = ['GoogleNews-vectors-negative300.bin',
-                   'glove.840B.300d.w2v.txt',
-                   'glove.twitter.27B.50d.w2v.txt', 'glove.twitter.27B.100d.w2v.txt', 'glove.twitter.27B.200d.w2v.txt']
-w2v_model_choice = 1
-w2v_stopwords_path = "./data/stopwords_en.txt"
+w2v_model_path = '/../models/w2v_model/'
+w2v_model_files = ['GoogleNews-vectors-negative300.bin', 'glove.twitter.27B.200d.w2v.txt']
+w2v_model_choice = 'google' #or 'glove'
 
 '''gensim Doc2Vec'''
 d2v_model_path = '/../models/d2v_model/d2v_model_v1'

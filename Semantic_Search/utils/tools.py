@@ -25,30 +25,54 @@ def des_sort(scores):
     return des_score
 
 
+def split_by_capital(phase):
+    splits = []
+    if phase.isupper():
+        splits = [phase]
+    else:
+        # split by capital letter
+        splits = re.findall('[A-Z][^A-Z]*', phase)
+        splits = [phase[0:phase.find(splits[0])]] + splits if len(splits) > 0 else [phase]
+    return splits
+
 def split_phase(phase):
     splits = []
 
     if '-' in phase:
         splits = phase.split('-')
-    elif '_' in phase:
-        splits = phase.split('_')
-    elif phase.isupper():
-        splits = [phase]
     else:
-        # split by capital letter
-        pre_splits = re.findall('[A-Z][^A-Z]*', phase)
-        pre_splits = [phase[0:phase.find(pre_splits[0])]] + pre_splits if len(pre_splits) > 0 else [phase]
+        splits = [phase]
 
-        '''
-        #gensim.utils.simple_preprocess will do the split by " ", "-", remove sysmbols and a little stopwords
-        #**but not "_", the above codes should be added if need to split by "_"
-        '''
-        splits.clear()
-        for one_unit in pre_splits:
-            splits = splits + simple_preprocess(one_unit)
+    pre_splits = []
+    for a_split in splits:
+        if '_' in a_split:
+            pre_splits = pre_splits + a_split.split('_')
+        else:
+            pre_splits.append(a_split)
+    splits = pre_splits
 
-        # and remove '_|-| '
-        splits = [re.sub('_|-| |(|)', '', word) for word in splits]
+    pre_splits = []
+    for a_split in splits:
+        if ' ' in a_split:
+            pre_splits = pre_splits + a_split.split(' ')
+        else:
+            pre_splits.append(a_split)
+    splits = pre_splits
+
+    pre_splits = []
+    for a_split in splits:
+        pre_splits = pre_splits + split_by_capital(a_split)
+
+    '''
+    #gensim.utils.simple_preprocess will do the split by " ", "-", remove sysmbols and a little stopwords
+    #**but not "_", the above codes should be added if need to split by "_"
+    '''
+    splits.clear()
+    for one_unit in pre_splits:
+        splits = splits + simple_preprocess(one_unit)
+
+    # and remove '_|-| '
+    splits = [re.sub('_|-| |\(|\)', '', word) for word in splits]
 
     return splits
 
