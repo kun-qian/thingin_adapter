@@ -10,6 +10,7 @@ cython = "==0.28.3"
 click = "*"
 future = "*"
 django = "*"
+uwsgi = "*"
 
 [dev-packages]
 

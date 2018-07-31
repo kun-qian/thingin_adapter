@@ -15,8 +15,7 @@ w2v_model_files = ['GoogleNews-vectors-negative300.bin', 'glove.twitter.27B.200d
 w2v_model_choice = 'google' #or 'glove'
 
 '''gensim Doc2Vec'''
-d2v_model_path = '/../models/d2v_model/d2v_model_v1'
-d2v_model2_path = '/../models/d2v_model/d2v_model_v2'
+d2v_model_path = '/../models/d2v_model/d2v_model_v2'
 dbow_model_file = 'model.dbow'
 dm_model_file = 'model.dm'
 

@@ -3,10 +3,14 @@
 from thingin_recommender import settings
 from const import SEPARATOR, KEY_VALUE_SEPARATOR
 import os
+import pickle
 from const import methods
+from Semantic_Search.DocSimWrapper import vecsim, get_sentence_vector
+
+CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'
 
 
-def get_recommendations_from_keywords(keywords, top_n, threshold, method):
+def get_recommendations_from_keywords2(keywords, top_n, threshold, method):
     results = {}
     mapping_file_path = os.path.join(settings.BASE_DIR, "mapping_{}.txt".format(methods[method]))
     with open(mapping_file_path, 'r') as f:
@@ -28,6 +32,31 @@ def get_recommendations_from_keywords(keywords, top_n, threshold, method):
                     results[word] = structured_recommendations
                     break
     return results
+
+
+def get_recommendations_from_keywords(keywords, top_n, threshold, method):
+    d = dict()
+    cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
+    with open(cache_file, 'rb') as file:
+        classes = pickle.load(file)
+    for keyword in keywords:
+        keyword_vec = get_sentence_vector(keyword, method)
+        d[keyword] = get_top_n_similar_classes(keyword_vec, classes, top_n, threshold)
+    return d
+
+
+def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
+    res = []
+    for c in classes:
+        class_vec = c['vec']
+        sim = vecsim(vec, class_vec)
+        if sim > threshold:
+            res.append({"class": c['iri'],
+                        "name": c['name'],
+                        "similarity": sim})
+
+    res.sort(key=lambda x: x['similarity'], reverse=True)
+    return res[:n]
 
 
 if __name__ == "__main__":
