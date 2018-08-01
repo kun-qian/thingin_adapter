@@ -31,7 +31,7 @@ else:
         # os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
 
         # retrieve classes with comments
-        if method % 2 == 0:
+        if not is_similarity_by_name(method):
             r = requests.get(
                 "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
                 "iri%2Cname%2Ccomment&limit=10000")
@@ -50,7 +50,7 @@ else:
     classes = [c for c in classes if len(re.findall(filtered_keywords, c['data']['name'].lower())) == 0]
 
     # if consider the comments similarity, remove classes without comments
-    if method % 2 == 0:
+    if not is_similarity_by_name(method):
         classes = [c for c in classes if 'comment' in c['data'].keys()]
         for c in classes:
             c['data']['comment'] = re.sub('\n|\r', ' ', c['data']['comment'][0])
@@ -59,7 +59,7 @@ else:
     # remove duplicate iri class
     classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
 
-    data_key = 'name' if method % 2 == 1 else 'comment'
+    data_key = 'name' if is_similarity_by_name(method) else 'comment'
 
     for c in classes:
         if data_key not in c.keys():
@@ -94,13 +94,19 @@ def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
     return res[:n]
 
 
-with open("mapping_{}.txt".format(methods[method]), "w+") as f:
-    for keyword in keywords:
-        # keyword_vec = get_sentence_vector(keyword, method)
+def is_similarity_by_name(method):
+    if method in [1, 3, 5, 7, 9]:
+        return True
+    else:
+        return False
 
-        # just use word2vec method to calcualte the vector or a keyword
-        keyword_vec = get_sentence_vector(keyword, method - 1 if method % 2 == 0 else method)
-        similar_classes = get_top_n_similar_classes(keyword_vec, classes)
-        print(similar_classes)
-        similar_classes_str = ";".join(map(lambda x: x["name"] + SEPARATOR + x["class"] + SEPARATOR + str(x["similarity"]), similar_classes))
-        f.write(keyword + KEY_VALUE_SEPARATOR + similar_classes_str + "\r\n")
+# with open("mapping_{}.txt".format(methods[method]), "w+") as f:
+#     for keyword in keywords:
+#         # keyword_vec = get_sentence_vector(keyword, method)
+#
+#         # just use word2vec method to calcualte the vector or a keyword
+#         keyword_vec = get_sentence_vector(keyword, method - 1 if method % 2 == 0 else method)
+#         similar_classes = get_top_n_similar_classes(keyword_vec, classes)
+#         print(similar_classes)
+#         similar_classes_str = ";".join(map(lambda x: x["name"] + SEPARATOR + x["class"] + SEPARATOR + str(x["similarity"]), similar_classes))
+#         f.write(keyword + KEY_VALUE_SEPARATOR + similar_classes_str + "\r\n")
