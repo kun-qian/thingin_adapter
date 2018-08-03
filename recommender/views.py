@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 import json
 from json.decoder import JSONDecodeError
 from .utils import get_recommendations_from_keywords
+from config import enabled_methods
 
 
 @require_POST
@@ -25,6 +26,10 @@ def get_recommendations(request):
         top_n = params.get('top_n', 3)
         threshold = params.get('threshold', 0)
         method = params.get('method', 5)
+        if method not in enabled_methods:
+            res['code'] = '401'
+            res['res'] = 'method {} is not available any more'.format(method)
+            return JsonResponse(res)
         if keywords is not None and len(keywords) > 0:
             mapping = get_recommendations_from_keywords(keywords, top_n, threshold, method)
             res['code'] = 200

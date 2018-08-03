@@ -5,9 +5,9 @@ import requests
 import re
 import os
 import pickle
-from const import SEPARATOR, KEY_VALUE_SEPARATOR
+from config import SEPARATOR, KEY_VALUE_SEPARATOR
 from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim
-from const import methods, D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
+from config import methods, D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
     FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, W2V_GOOGLE_NAMES_METHOD, W2V_GLOVE_NAMES_METHOD
 
 logging.basicConfig(level=logging.INFO)
@@ -19,6 +19,14 @@ CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'
 method = FASTTEXT_COMMENTS_METHOD
 
 cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
+
+
+def is_similarity_by_name(method):
+    if method in [1, 3, 5, 7, 9]:
+        return True
+    else:
+        return False
+
 
 if USE_CACHED_VECTOR and os.path.exists(cache_file):
     logging.info("loading cache file to get vectors of classes")
@@ -72,41 +80,3 @@ else:
     # write classes into local file for cache
     with open(cache_file, 'wb') as file:
         pickle.dump(classes, file)
-
-keywords = ['a place to have dinner', 'cool down the temperature', 'cooling', 'dinner', 'lunch dinner', 'drink',
-            'water', 'heater', 'air conditioner', 'sunny', 'cafe', 'temperature controller', 'tea', 'hungry',
-            'printer', 'cleaner', 'power charge', 'car wash', 'flower store', 'restaurant', 'theater', 'bicycle',
-            'park', 'playground', 'coffee',
-            'children playground', 'entertainment', 'bicycle station', 'bus station', 'dish cleaner']
-
-
-def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
-    res = []
-    for c in classes:
-        class_vec = c['vec']
-        sim = vecsim(vec, class_vec)
-        if sim > threshold:
-            res.append({"class": c['iri'],
-                        "name": c['name'],
-                        "similarity": sim})
-
-    res.sort(key=lambda x: x['similarity'], reverse=True)
-    return res[:n]
-
-
-def is_similarity_by_name(method):
-    if method in [1, 3, 5, 7, 9]:
-        return True
-    else:
-        return False
-
-# with open("mapping_{}.txt".format(methods[method]), "w+") as f:
-#     for keyword in keywords:
-#         # keyword_vec = get_sentence_vector(keyword, method)
-#
-#         # just use word2vec method to calcualte the vector or a keyword
-#         keyword_vec = get_sentence_vector(keyword, method - 1 if method % 2 == 0 else method)
-#         similar_classes = get_top_n_similar_classes(keyword_vec, classes)
-#         print(similar_classes)
-#         similar_classes_str = ";".join(map(lambda x: x["name"] + SEPARATOR + x["class"] + SEPARATOR + str(x["similarity"]), similar_classes))
-#         f.write(keyword + KEY_VALUE_SEPARATOR + similar_classes_str + "\r\n")

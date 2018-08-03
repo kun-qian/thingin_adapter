@@ -3,18 +3,17 @@ import os
 import sys
 from Semantic_Search.utils.preprocess import load_FastText_model, load_DBOW_model, load_DM_model, load_w2v_model
 import logging
-import const
+import config
+from Semantic_Search.utils.preprocess import load_model
 
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
     logging.info("loading models...")
 
-    const.d2v_dm_model = load_DM_model()
-    const.d2v_dbow_model = load_DBOW_model()
-    const.fasttext_model = load_FastText_model()
-    const.w2v_google_model = load_w2v_model()
-    const.w2v_glove_model = load_w2v_model(model_choice="glove")
+    for enabled_method in config.enabled_methods:
+        config.models[enabled_method] = load_model(enabled_method)
+
     logging.info("finish loading models...")
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thingin_recommender.settings")
     try:

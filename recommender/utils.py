@@ -1,10 +1,10 @@
 #!usr/bin/env python3
 # -*- coding: utf-8 -*-
 from thingin_recommender import settings
-from const import SEPARATOR, KEY_VALUE_SEPARATOR
+from config import SEPARATOR, KEY_VALUE_SEPARATOR
 import os
 import pickle
-from const import methods
+from config import methods
 from Semantic_Search.DocSimWrapper import vecsim, get_sentence_vector
 
 CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'

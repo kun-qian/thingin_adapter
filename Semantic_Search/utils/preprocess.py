@@ -6,11 +6,24 @@ from gensim.models.doc2vec import Doc2Vec
 from gensim.models import KeyedVectors
 
 from .const import *
-
+import config
 
 '''
 The following functions are for training and loading Word2Vec models
 '''
+
+
+def load_model(method):
+    if method in [config.D2V_DM_NAMES_METHOD, config.D2V_DM_COMMENTS_METHOD]:
+        return load_DM_model()
+    if method in [config.D2V_DBOW_NAMES_METHOD, config.D2V_DBOW_COMMENTS_METHOD]:
+        return load_DBOW_model()
+    if method in [config.FASTTEXT_NAMES_METHOD, config.FASTTEXT_COMMENTS_METHOD]:
+        return load_FastText_model()
+    if method in [config.w2v_google_model]:
+        return load_w2v_model()
+    if method in [config.w2v_glove_model]:
+        return load_w2v_model(model_choice="glove")
 
 
 def load_w2v_model(model_path=w2v_model_path, model_choice='google'):

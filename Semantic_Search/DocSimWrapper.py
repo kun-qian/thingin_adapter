@@ -1,10 +1,10 @@
 import logging
 import numpy as np
 from gensim import matutils
-import const
+import config
 from .utils.tools import split_phase
 
-from const import D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, \
+from config import D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, \
     D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
     FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, methods, W2V_GOOGLE_NAMES_METHOD, \
     W2V_GLOVE_NAMES_METHOD
@@ -14,11 +14,11 @@ VECDIM = 10
 
 
 if not FORDEV:
-    dm_model = const.d2v_dm_model
-    dbow_model = const.d2v_dbow_model  # load_DBOW_model(model_path=d2v_model2_path)
-    fasttext_model = const.fasttext_model
-    w2v_google_model = const.w2v_google_model  # load_w2v_model(model_choice='google')
-    w2v_glove_model = const.w2v_glove_model  # load_w2v_model(model_choice='glove')
+    dm_model = config.d2v_dm_model
+    dbow_model = config.d2v_dbow_model  # load_DBOW_model(model_path=d2v_model2_path)
+    fasttext_model = config.fasttext_model
+    w2v_google_model = config.w2v_google_model  # load_w2v_model(model_choice='google')
+    w2v_glove_model = config.w2v_glove_model  # load_w2v_model(model_choice='glove')
 
     models = {D2V_DM_NAMES_METHOD: dm_model,
               D2V_DM_COMMENTS_METHOD: dm_model,
@@ -82,6 +82,9 @@ def get_sentence_vector(sentence, method=D2V_DBOW_NAMES_METHOD):
         return vec
 
     model = models[method]
+
+    if model is None:
+        return None
 
     if method in [D2V_DM_NAMES_METHOD, D2V_DBOW_NAMES_METHOD, W2V_GOOGLE_NAMES_METHOD, W2V_GLOVE_NAMES_METHOD]:
         vec = []
