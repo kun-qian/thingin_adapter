@@ -13,10 +13,6 @@ FORDEV = False
 VECDIM = 10
 
 
-def dbow_model2_path(args):
-    pass
-
-
 if not FORDEV:
     dm_model = const.d2v_dm_model
     dbow_model = const.d2v_dbow_model  # load_DBOW_model(model_path=d2v_model2_path)
@@ -88,14 +84,18 @@ def get_sentence_vector(sentence, method=D2V_DBOW_NAMES_METHOD):
     model = models[method]
 
     if method in [D2V_DM_NAMES_METHOD, D2V_DBOW_NAMES_METHOD, W2V_GOOGLE_NAMES_METHOD, W2V_GLOVE_NAMES_METHOD]:
-        try:
-            vec = np.array([model[word] for word in split_phase(sentence)]).mean(axis=0)
-            vec = matutils.unitvec(vec)
-        except:
-            logging.info('no existed word in sentence: {} in model: {}!'
-                         .format(sentence, methods[method]))
-            # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
+        vec = []
+        for word in split_phase(sentence):
+            try:
+                vec.append(model[word])
+            except:
+                logging.info('no existed word {} in sentence: {} in model: {}!'.format(word, sentence, methods[method]))
+                continue
+        if len(vec) == 0:
             return None
+        vec = np.array(vec).mean(axis=0)
+        vec = matutils.unitvec(vec)
+        return vec
     elif method == FASTTEXT_NAMES_METHOD:
         print(sentence)
         splits = split_phase(sentence)
@@ -118,7 +118,11 @@ def get_sentence_vector(sentence, method=D2V_DBOW_NAMES_METHOD):
     return vec
 
 
+
+
 def vecsim(vec1, vec2):
     if vec1 is None or vec2 is None:
         return 0
     return np.dot(vec1, vec2)
+
+
