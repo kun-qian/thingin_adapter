@@ -14,11 +14,11 @@ VECDIM = 10
 
 
 if not FORDEV:
-    dm_model = config.d2v_dm_model
-    dbow_model = config.d2v_dbow_model  # load_DBOW_model(model_path=d2v_model2_path)
-    fasttext_model = config.fasttext_model
-    w2v_google_model = config.w2v_google_model  # load_w2v_model(model_choice='google')
-    w2v_glove_model = config.w2v_glove_model  # load_w2v_model(model_choice='glove')
+    dm_model = config.models[D2V_DM_NAMES_METHOD]
+    dbow_model = config.models[D2V_DBOW_NAMES_METHOD]  # load_DBOW_model(model_path=d2v_model2_path)
+    fasttext_model = config.models[FASTTEXT_NAMES_METHOD]
+    w2v_google_model = config.models[W2V_GOOGLE_NAMES_METHOD]  # load_w2v_model(model_choice='google')
+    w2v_glove_model = config.models[W2V_GLOVE_NAMES_METHOD]  # load_w2v_model(model_choice='glove')
 
     models = {D2V_DM_NAMES_METHOD: dm_model,
               D2V_DM_COMMENTS_METHOD: dm_model,
