@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import sys
-from Semantic_Search.utils.preprocess import load_FastText_model, load_DBOW_model, load_DM_model, load_w2v_model
 import logging
 import config
 from Semantic_Search.utils.preprocess import load_model

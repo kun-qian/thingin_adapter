@@ -1,12 +1,12 @@
-from django.shortcuts import render
-
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
 import json
 from json.decoder import JSONDecodeError
-from .utils import get_recommendations_from_keywords
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
 from config import enabled_methods
+from .utils import get_recommendations_from_keywords
 
 
 @require_POST

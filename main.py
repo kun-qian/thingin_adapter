@@ -1,14 +1,12 @@
 import logging
-import time
-
-import requests
-import re
 import os
 import pickle
-from config import SEPARATOR, KEY_VALUE_SEPARATOR
-from Semantic_Search.DocSimWrapper import get_sentence_vector, vecsim
-from config import methods, D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
-    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, W2V_GOOGLE_NAMES_METHOD, W2V_GLOVE_NAMES_METHOD
+import re
+
+import requests
+
+from Semantic_Search.DocSimWrapper import get_sentence_vector
+from config import methods, FASTTEXT_COMMENTS_METHOD
 
 logging.basicConfig(level=logging.INFO)
 

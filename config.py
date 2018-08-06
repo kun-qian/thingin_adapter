@@ -13,11 +13,11 @@ FASTTEXT_COMMENTS_METHOD = 6
 W2V_GOOGLE_NAMES_METHOD = 7
 W2V_GLOVE_NAMES_METHOD = 9
 
-global d2v_dm_model
-global d2v_dbow_model
-global fasttext_model
-global w2v_google_model
-global w2v_glove_model
+d2v_dm_model = None
+d2v_dbow_model = None
+fasttext_model = None
+w2v_google_model = None
+w2v_glove_model = None
 
 methods = {D2V_DM_NAMES_METHOD: 'd2v_dm_names',
            D2V_DM_COMMENTS_METHOD: 'd2v_dm_comments',
@@ -39,3 +39,6 @@ models = {D2V_DM_NAMES_METHOD: d2v_dm_model,
           }
 
 enabled_methods = [FASTTEXT_NAMES_METHOD, W2V_GOOGLE_NAMES_METHOD]
+
+if __name__ == "__main__":
+    print(models[FASTTEXT_NAMES_METHOD])
