@@ -20,9 +20,9 @@ def load_model(method):
         return load_DBOW_model()
     if method in [config.FASTTEXT_NAMES_METHOD, config.FASTTEXT_COMMENTS_METHOD]:
         return load_FastText_model()
-    if method in [config.w2v_google_model]:
+    if method in [config.W2V_GOOGLE_NAMES_METHOD]:
         return load_w2v_model()
-    if method in [config.w2v_glove_model]:
+    if method in [config.W2V_GLOVE_NAMES_METHOD]:
         return load_w2v_model(model_choice="glove")
 
 
