@@ -2,21 +2,25 @@ import logging
 import os
 import pickle
 import re
-
 import requests
-
-from Semantic_Search.DocSimWrapper import get_sentence_vector
+from Semantic_Search.utils.preprocess import load_model
+import config
 from config import methods, FASTTEXT_COMMENTS_METHOD
 
 logging.basicConfig(level=logging.INFO)
 
-USE_CACHED_VECTOR = True
+USE_CACHED_VECTOR = False
 CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'
 
 # use COMMENTS if method is even, use NAMES if odd
 method = FASTTEXT_COMMENTS_METHOD
 
 cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
+logging.info("loading models...")
+config.models[method] = load_model(method)
+logging.info("finish loading models...")
+
+from Semantic_Search.DocSimWrapper import get_sentence_vector
 
 
 def is_similarity_by_name(method):
