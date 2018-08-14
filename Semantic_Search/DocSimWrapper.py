@@ -2,70 +2,32 @@ import logging
 import numpy as np
 from gensim import matutils
 import config
+from Semantic_Search.utils.Sentence2Vec import *
 from .utils.tools import split_phase
 
-from config import D2V_DM_NAMES_METHOD, D2V_DM_COMMENTS_METHOD, \
-    D2V_DBOW_NAMES_METHOD, D2V_DBOW_COMMENTS_METHOD, \
-    FASTTEXT_NAMES_METHOD, FASTTEXT_COMMENTS_METHOD, methods, W2V_GOOGLE_NAMES_METHOD, \
-    W2V_GLOVE_NAMES_METHOD
+from config import *
 
-FORDEV = False
-VECDIM = 10
-
-if not FORDEV:
-    dm_model = config.models[D2V_DM_NAMES_METHOD]
-    dbow_model = config.models[D2V_DBOW_NAMES_METHOD]  # load_DBOW_model(model_path=d2v_model2_path)
-    fasttext_model = config.models[FASTTEXT_NAMES_METHOD]
-    w2v_google_model = config.models[W2V_GOOGLE_NAMES_METHOD]  # load_w2v_model(model_choice='google')
-    w2v_glove_model = config.models[W2V_GLOVE_NAMES_METHOD]  # load_w2v_model(model_choice='glove')
-
-    models = {D2V_DM_NAMES_METHOD: dm_model,
-              D2V_DM_COMMENTS_METHOD: dm_model,
-              D2V_DBOW_NAMES_METHOD: dbow_model,
-              D2V_DBOW_COMMENTS_METHOD: dbow_model,
-              FASTTEXT_NAMES_METHOD: fasttext_model,
-              FASTTEXT_COMMENTS_METHOD: fasttext_model,
-              W2V_GOOGLE_NAMES_METHOD: w2v_google_model,
-              W2V_GLOVE_NAMES_METHOD: w2v_glove_model}
+# FORDEV = False
+# VECDIM = 10
+#
+# if not FORDEV:
+#     fasttext_model = config.models[FASTTEXT_NAMES_METHOD]
+#     w2v_google_model = config.models[W2V_GOOGLE_NAMES_METHOD]
+#     inferset_model = config.models[INFERSENT_NAMES_METHOD]
+#     gran_model = config.models[GRAN_NAMES_METHOD]
+#
+#     models = {FASTTEXT_NAMES_METHOD: fasttext_model,
+#               W2V_GOOGLE_NAMES_METHOD: w2v_google_model,
+#               WEIGHTED_W2V_FASTTEXT_NAMES_METHOD: fasttext_model,
+#               WEIGHTED_W2V_GOOGLE_NAMES_METHOD: w2v_google_model,
+#               INFERSENT_NAMES_METHOD: inferset_model,
+#               GRAN_NAMES_METHOD: gran_model
+#               }
+#
+#     vector_u = None  # vector u for weighted avaerage word2vec
 
 
-def sensim(source, targets, method=1, threshhold=0):
-    sims = []
-
-    if FORDEV:
-        rsims = list(np.random.random(size=VECDIM))
-        for index, score in enumerate(rsims):
-            sims.append({'index': index, 'score': score})
-        sims.sort(key=lambda k: k['score'], reverse=True)
-        return sims
-
-    if isinstance(targets, str):
-        targets = [targets]
-    else:
-        targets = targets
-
-    try:
-        source_vec = get_sentence_vector(source, method)
-    except KeyError:
-        return sims
-    for index, sentence in enumerate(targets):
-        try:
-            target_vec = get_sentence_vector(sentence, method)
-        except KeyError:
-            continue
-        sim_score = vecsim(source_vec, target_vec)
-        if sim_score < threshhold:
-            logging.info('similarity between source: {} and target: {} is lower than threshold {}, ignored!'.
-                         format(source, sentence, threshhold))
-            continue
-        sims.append({'index': index, 'score': sim_score, })
-
-    # Sort results by score in desc order
-    sims.sort(key=lambda k: k['score'], reverse=True)
-    return sims
-
-
-def get_sentence_vector(sentence, method=D2V_DBOW_NAMES_METHOD):
+def get_sentence_vector(sentence, method=W2V_GOOGLE_NAMES_METHOD):
     '''
 
     :param sentence:
@@ -75,44 +37,17 @@ def get_sentence_vector(sentence, method=D2V_DBOW_NAMES_METHOD):
 
     # assert isinstance(sentence, str) and 0 < method <= len(models)
 
-    if FORDEV:
-        vec = np.random.random(size=VECDIM)
-        vec = matutils.unitvec(vec)
-        return vec
+    model = config.models[method]
 
-    model = models[method]
-
-    if model is None:
-        return None
-
-    if method in [D2V_DM_NAMES_METHOD, D2V_DBOW_NAMES_METHOD, W2V_GOOGLE_NAMES_METHOD, W2V_GLOVE_NAMES_METHOD]:
-        try:
-            vec = np.array([model[word] for word in split_phase(sentence)]).mean(axis=0)
-            vec = matutils.unitvec(vec)
-        except:
-            logging.info('no existed word in sentence: {} in model: {}!'
-                         .format(sentence, methods[method]))
-            # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
-            return None
-    elif method == FASTTEXT_NAMES_METHOD:
-        print(sentence)
-        splits = split_phase(sentence)
-        if len(splits) == 0:
-            return None
-        else:
-            vec = np.array([model.get_word_vector(word) for word in splits]).mean(axis=0)
-            vec = matutils.unitvec(vec)
-    elif method == FASTTEXT_COMMENTS_METHOD:
-        vec = matutils.unitvec(model.get_sentence_vector(sentence))
-    elif method in [D2V_DM_COMMENTS_METHOD, D2V_DBOW_COMMENTS_METHOD]:
-        try:
-            vec = model.infer_vector(doc_words=split_phase(sentence), alpha=0.1, min_alpha=0.0001, steps=20)
-            vec = matutils.unitvec(vec)
-        except:
-            logging.info('fail to infer vector of sentence: {}!'.format(sentence))
-            # raise KeyError('no vector for a word in sentence {}!'.format(sentence))
-            return None
-
+    if 'average_name_vector_' in methods[method]:
+        vec = average_sentence2vec(sentence, model, method)
+    elif 'weighted_name_vector_' in methods[method]:
+        vector_u = config.vectors_u[method]
+        vec = weighted_sentence2vec(sentence, model, vector_u, method)
+    elif 'name_vector_infersent' in methods[method]:
+        vec = infersent_sentence2vec(sentence, model, method=INFERSENT_NAMES_METHOD, tokenize=True)
+    elif 'name_vector_gran' in methods[method]:
+        vec = gran_sentence2vec(sentence, model)
     return vec
 
 

@@ -1,28 +1,34 @@
-'''wiki data'''
-wiki_dump_file = '/home/sw/NLP/wiki_data/enwiki-20180601-pages-articles-multistream.xml.bz2'
-wiki_corups_file = '/home/sw/NLP/wiki_data/enwiki-20180601.corups'
-
-'''gensim NLP'''
-nlp_model_path = '/home/sw/NLP/wiki_data/model'
-wordids_file = '_wordids.txt'
-corups_file = '_tfidf.mm'
-lsi_model_file = 'model.lsi'
-lda_model_file = 'model.lda'
-
 '''gensim Word2Vec'''
 w2v_model_path = '/../models/w2v_model/'
 w2v_model_files = ['GoogleNews-vectors-negative300.bin', 'glove.twitter.27B.200d.w2v.txt']
 w2v_model_choice = 'google' #or 'glove'
 
-'''gensim Doc2Vec'''
-d2v_model_path = '/../models/d2v_model/d2v_model_v2'
-dbow_model_file = 'model.dbow'
-dm_model_file = 'model.dm'
 
 '''fastText'''
 fasttext_model_filepath = '/../models/fasttext/wiki.en.bin'
 
-TOPICS = 400
+'''infersent'''
+infersent_model_filepath = '/../models/infersent_model/infersent{}.pkl'
+infersent_version = 2
+infersent_wordvec_filepath = ['/../models/infersent_model/glove.840B.300d.txt',
+                              '/../models/infersent_model/crawl-300d-2M.vec']
+
+'''gran'''
+gran_model_filepath = '/../models/gran_model/gran.pickle'
+gran_wordvec_filepath = '/../models/gran_model/paragram_sl999_small.txt'
+
+
+
+
+'''
+#
+# parameters for weighted average vector algorithm
+#
+'''
+vector_u_cache_file = 'vector_u_for_{}.pkl'
+coefficient_a = 1e-3
+
+
 
 import logging
 import sys

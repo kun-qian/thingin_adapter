@@ -3,7 +3,7 @@ import os
 import sys
 import logging
 import config
-from Semantic_Search.utils.preprocess import load_model
+from Semantic_Search.utils.preprocess import load_model, load_vector_u
 
 logging.basicConfig(level=logging.INFO)
 
@@ -12,6 +12,11 @@ if __name__ == "__main__":
 
     for enabled_method in config.enabled_methods:
         config.models[enabled_method] = load_model(enabled_method)
+
+        #load vector_u for weighted average vector methods
+        if enabled_method in [config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD, config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD]:
+            config.vectors_u[enabled_method] = load_vector_u(enabled_method)
+
 
     logging.info("finish loading models...")
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thingin_recommender.settings")
