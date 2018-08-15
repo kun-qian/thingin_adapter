@@ -1,3 +1,19 @@
+'''
+solution to segfaul when import fastText and import torch
+https://github.com/pytorch/pytorch/issues/9129
+
+Reason:
+
+    pytorch is compiled with gcc 4.9.2
+    conda's default gcc is 4.8.5
+
+Fix:
+
+    install gcc-4.9 in conda (e.g. conda install -c serge-sans-paille gcc_49)
+    install pytorch with conda install (in my case, conda install pytorch torchvision cuda90 -c pytorch)
+    install fastText with gcc-4.9 compiler: CC=gcc-4.9 pip install . in the fastText git clone
+'''
+
 import fastText
 import logging
 import os
@@ -22,7 +38,7 @@ def load_model(method):
     if method in [config.INFERSENT_NAMES_METHOD]:
         return load_InferSent_model()
     if method in [config.GRAN_NAMES_METHOD]:
-        return load_InferSent_model()
+        return load_GRAN_model()
 
 
 def load_vector_u(method):
