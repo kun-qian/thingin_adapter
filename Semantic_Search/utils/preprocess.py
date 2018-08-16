@@ -13,13 +13,14 @@ Fix:
     install pytorch with conda install (in my case, conda install pytorch torchvision cuda90 -c pytorch)
     install fastText with gcc-4.9 compiler: CC=gcc-4.9 pip install . in the fastText git clone
 '''
-
-import fastText
 import logging
+logging.basicConfig(level=logging.INFO)
 import os
 import pickle
+import fastText
 import theano
 import lasagne
+
 import torch
 from gensim.models import KeyedVectors
 
@@ -39,17 +40,6 @@ def load_model(method):
         return load_InferSent_model()
     if method in [config.GRAN_NAMES_METHOD]:
         return load_GRAN_model()
-
-
-def load_vector_u(method):
-    vec = load_vector_u(method)
-
-    if vec is None:
-        raise Exception('error in loading vector U for method: ' + config.methods[method])
-
-    logging.info('finished loading vector U for method: ' + config.methods[method])
-
-    return vec
 
 
 def load_w2v_model(model_path=w2v_model_path, model_choice='google'):
@@ -135,6 +125,7 @@ def load_GRAN_model():
     return {'model': model, 'words': words}
 
 if __name__ == '__main__':
-    load_InferSent_model()
-    load_GRAN_model()
-    print(dir(theano.config.dnn))
+    execute_from_command_line(sys.argv)
+    # load_InferSent_model()
+    # load_GRAN_model()
+    # print(dir(theano.config.dnn))

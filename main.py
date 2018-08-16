@@ -32,7 +32,6 @@ for method in config.enabled_methods:
         config.models[config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD] = config.models[method]
     if method == config.W2V_GOOGLE_NAMES_METHOD and config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD in config.enabled_methods:
         config.models[config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD] = config.models[method]
-
 logging.info("finish loading models...")
 
 from Semantic_Search.DocSimWrapper import get_sentence_vector
@@ -45,13 +44,16 @@ def is_similarity_by_name(method):
     #     return False
     return True
 
-
+cache_file = CACHE_FILE_BASIC_NAME.format(methods[GRAN_NAMES_METHOD])
 
 if USE_CACHED_VECTOR and os.path.exists(cache_file):
     logging.info("loading cache file to get vectors of classes")
     with open(cache_file, 'rb') as file:
         classes = pickle.load(file)
         print(classes[:3])
+        for i in range(len(classes)):
+            if classes[i]['name'] == 'Tricam':
+                print(i)
 else:
     try:
 
