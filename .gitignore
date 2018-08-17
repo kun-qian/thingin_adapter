@@ -4,3 +4,6 @@ Semantic_search/utils/__pycache__/
 .idea/
 db.sqlite3
 *.pyc
+*.pkl
+mapping*.txt
+
