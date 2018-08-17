@@ -18,17 +18,14 @@ Theano 1.0.2: pip install Theano
 Ladage 0.2 dev : pip install https://github.com/Lasagne/Lasagne/archive/master.zip
 '''
 import logging
+
 logging.basicConfig(level=logging.INFO)
 import os
 import pickle
 import fastText
-logging.info('1')
 import theano
-logging.info('2')
 import lasagne
-logging.info('3')
 import torch
-logging.info('4')
 from gensim.models import KeyedVectors
 
 from Semantic_Search.utils.GRAN_Model.GRAN import models
@@ -87,6 +84,8 @@ def load_FastText_model():
 '''
 The following functions are for loading InferSent model
 '''
+
+
 def load_InferSent_model():
     current_dir = os.path.dirname(os.path.realpath(__file__))
     MODEL_PATH = current_dir + infersent_model_filepath.format(infersent_version)
@@ -97,7 +96,7 @@ def load_InferSent_model():
     infersent.load_state_dict(torch.load(MODEL_PATH))
     logging.info('finished loading InferSent model!')
 
-    W2V_PATH = current_dir + infersent_wordvec_filepath[infersent_version-1]
+    W2V_PATH = current_dir + infersent_wordvec_filepath[infersent_version - 1]
     infersent.set_w2v_path(W2V_PATH)
 
     logging.info('start building InferSent vocabulary !')
@@ -112,13 +111,15 @@ def load_InferSent_model():
 '''
 The following functions are for loading GRAN model
 '''
+
+
 def load_GRAN_model():
     theano.config.dnn.enabled = 'False'
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
 
     params = {'dropout': 0.0, 'word_dropout': 0.0, 'model': 'gran', 'outgate': True, 'gran_type': 1,
-             'dim': 300, 'sumlayer': False}
+              'dim': 300, 'sumlayer': False}
 
     W2V_PATH = current_dir + gran_wordvec_filepath
     (words, We) = get_wordmap(W2V_PATH)
@@ -127,9 +128,10 @@ def load_GRAN_model():
     base_params = pickle.load(open(MODEL_PATH, 'rb'), encoding='iso-8859-1')
     lasagne.layers.set_all_param_values(model.final_layer, base_params)
 
-    print('GRAN model loaded')
+    logging.info('GRAN model loaded')
 
     return {'model': model, 'words': words}
+
 
 if __name__ == '__main__':
     # load_InferSent_model()

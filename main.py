@@ -11,14 +11,13 @@ from config import *
 
 logging.basicConfig(level=logging.INFO)
 
+# os.environ['http_proxy'] = 'http://10.193.250.16:8080/'
+# os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
 
-os.environ['http_proxy'] = 'http://10.193.250.16:8080/'
-os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
+# only run onece to download the NLTK data for tokenizer
 
-#only run onece to download the NLTK data for tokenizer
-
-#only  run onece to download the NLTK data for tokenizer#  import nltk
- # nltk.download('punkt')
+# only  run onece to download the NLTK data for tokenizer#  import nltk
+# nltk.download('punkt')
 
 
 USE_CACHED_VECTOR = False
@@ -37,12 +36,13 @@ logging.info("finish loading models...")
 from Semantic_Search.DocSimWrapper import get_sentence_vector
 
 
-def is_similarity_by_name(method):
+def is_similarity_by_name(method=None):
     # if method in [1, 3, 5, 7, 9]:
     #     return True
     # else:
     #     return False
     return True
+
 
 cache_file = CACHE_FILE_BASIC_NAME.format(methods[GRAN_NAMES_METHOD])
 
@@ -57,10 +57,8 @@ if USE_CACHED_VECTOR and os.path.exists(cache_file):
 else:
     try:
 
-
-
         # retrieve classes with comments
-        if not is_similarity_by_name(method):
+        if not is_similarity_by_name():
             r = requests.get(
                 "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
                 "iri%2Cname%2Ccomment&limit=10000")
@@ -79,7 +77,7 @@ else:
     classes = [c for c in classes if len(re.findall(filtered_keywords, c['data']['name'].lower())) == 0]
 
     # if consider the comments similarity, remove classes without comments
-    if not is_similarity_by_name(method):
+    if not is_similarity_by_name():
         classes = [c for c in classes if 'comment' in c['data'].keys()]
         for c in classes:
             c['data']['comment'] = re.sub('\n|\r', ' ', c['data']['comment'][0])
@@ -88,13 +86,12 @@ else:
     # remove duplicate iri class
     classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
 
-
 for method in config.enabled_methods:
     cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
 
-    data_key = 'name' if is_similarity_by_name(method) else 'comment'
+    data_key = 'name' if is_similarity_by_name() else 'comment'
 
-    #build the cache of vector_u for weighted average vector methods
+    # build the cache of vector_u for weighted average vector methods
     if method in [config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD, config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD]:
         vec_u = load_vector_u(method)
         if vec_u is None:
@@ -114,5 +111,3 @@ for method in config.enabled_methods:
     # write classes into local file for cache
     with open(cache_file, 'wb') as file:
         pickle.dump(classes, file)
-
-

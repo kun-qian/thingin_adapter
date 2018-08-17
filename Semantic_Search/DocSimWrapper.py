@@ -1,11 +1,8 @@
-import logging
-import numpy as np
-from gensim import matutils
 import config
 from Semantic_Search.utils.Sentence2Vec import *
-from .utils.tools import split_phase
 
 from config import *
+
 
 # FORDEV = False
 # VECDIM = 10

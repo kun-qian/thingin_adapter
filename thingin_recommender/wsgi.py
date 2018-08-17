@@ -28,12 +28,11 @@ for enabled_method in config.enabled_methods:
             config.enabled_methods:
         config.models[config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD] = config.models[enabled_method]
 
-    #load vector_u for weighted average vector methods
+    # load vector_u for weighted average vector methods
     if enabled_method in [config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD, config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD]:
         config.vectors_u[enabled_method] = load_vector_u(enabled_method)
 
 logging.info("finish loading models...")
-
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thingin_recommender.settings")
 
