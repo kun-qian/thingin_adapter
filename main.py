@@ -44,50 +44,47 @@ def is_similarity_by_name(method=None):
     return True
 
 
-cache_file = CACHE_FILE_BASIC_NAME.format(methods[GRAN_NAMES_METHOD])
-
-if USE_CACHED_VECTOR and os.path.exists(cache_file):
-    logging.info("loading cache file to get vectors of classes")
-    with open(cache_file, 'rb') as file:
-        classes = pickle.load(file)
-        print(classes[:3])
-        for i in range(len(classes)):
-            if classes[i]['name'] == 'Tricam':
-                print(i)
-else:
-    try:
-
-        # retrieve classes with comments
-        if not is_similarity_by_name():
-            r = requests.get(
-                "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
-                "iri%2Cname%2Ccomment&limit=10000")
-        else:  # retrieve classes just with name
-            r = requests.get(
-                "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
-                "iri%2Cname&limit=10000")
-        logging.info("received %s classes from thingin!" % len(r.json()))
-    except requests.RequestException:
-        logging.info("can't get info from thingin!")
-        exit()
-
-    classes = r.json()
-    filtered_keywords = 'command|notification|functionality|function|unit|system|status|state|scheme|fragment|package' \
-                        '|specification'
-    classes = [c for c in classes if len(re.findall(filtered_keywords, c['data']['name'].lower())) == 0]
-
-    # if consider the comments similarity, remove classes without comments
-    if not is_similarity_by_name():
-        classes = [c for c in classes if 'comment' in c['data'].keys()]
-        for c in classes:
-            c['data']['comment'] = re.sub('\n|\r', ' ', c['data']['comment'][0])
-        # print(classes[0])
-
-    # remove duplicate iri class
-    classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
-
 for method in config.enabled_methods:
     cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
+
+    if USE_CACHED_VECTOR and os.path.exists(cache_file):
+        logging.info("loading cache file to get vectors of classes")
+        with open(cache_file, 'rb') as file:
+            classes = pickle.load(file)
+            print(classes[:3])
+            for i in range(len(classes)):
+                if classes[i]['name'] == 'Tricam':
+                    print(i)
+    else:
+        try:
+            # retrieve classes with comments
+            if not is_similarity_by_name(method):
+                r = requests.get(
+                    "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
+                    "iri%2Cname%2Ccomment&limit=10000")
+            else:  # retrieve classes just with name
+                r = requests.get(
+                    "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
+                    "iri%2Cname&limit=10000")
+            logging.info("received %s classes from thingin!" % len(r.json()))
+        except requests.RequestException:
+            logging.info("can't get info from thingin!")
+            exit()
+
+        classes = r.json()
+        filtered_keywords = 'command|notification|functionality|function|unit|system|status|state|scheme|fragment|package' \
+                            '|specification'
+        classes = [c for c in classes if len(re.findall(filtered_keywords, c['data']['name'].lower())) == 0]
+
+        # if consider the comments similarity, remove classes without comments
+        if not is_similarity_by_name(method):
+            classes = [c for c in classes if 'comment' in c['data'].keys()]
+            for c in classes:
+                c['data']['comment'] = re.sub('\n|\r', ' ', c['data']['comment'][0])
+                # print(classes[0])
+
+        # remove duplicate iri class
+        classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
 
     data_key = 'name' if is_similarity_by_name() else 'comment'
 

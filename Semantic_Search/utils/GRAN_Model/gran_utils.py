@@ -4,6 +4,9 @@ from random import choice
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 
+from config import DEBUG_ALGORITHM_TESTING
+
+
 def lookupIDX(words,w):
     w = w.lower()
     if len(w) > 1 and w[0] == '#':
@@ -90,6 +93,9 @@ def get_seq(p1, words):
     for i in p1:
         index = lookupIDX(words,i)
         if index is None:
-            continue
+            if DEBUG_ALGORITHM_TESTING:
+                continue
+            else:
+                return None
         X1.append(index)
     return X1

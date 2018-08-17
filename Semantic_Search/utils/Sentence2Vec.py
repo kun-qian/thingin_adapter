@@ -122,6 +122,8 @@ def gran_sentence2vec(sentence, model, method=GRAN_NAMES_METHOD):
     sen = ' '.join(splits)
     seq = []
     X1 = get_seq(sen, model['words'])
+    if X1 is None:
+        return None
     if len(X1) == 0:
         return None
     seq.append(X1)
