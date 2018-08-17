@@ -87,13 +87,13 @@ def get_pairs_fast(d, type):
     return pairs
 
 
-def get_seq(p1, words):
+def get_seq(p1, words, testmode=False):
     p1 = p1.split()
     X1 = []
     for i in p1:
         index = lookupIDX(words,i)
         if index is None:
-            if DEBUG_ALGORITHM_TESTING:
+            if testmode:
                 continue
             else:
                 return None
