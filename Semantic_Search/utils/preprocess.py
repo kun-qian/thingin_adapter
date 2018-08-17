@@ -12,16 +12,23 @@ Fix:
     install gcc-4.9 in conda (e.g. conda install -c serge-sans-paille gcc_49)
     install pytorch with conda install (in my case, conda install pytorch torchvision cuda90 -c pytorch)
     install fastText with gcc-4.9 compiler: CC=gcc-4.9 pip install . in the fastText git clone
+
+other requirements:
+Theano 1.0.2: pip install Theano
+Ladage 0.2 dev : pip install https://github.com/Lasagne/Lasagne/archive/master.zip
 '''
 import logging
 logging.basicConfig(level=logging.INFO)
 import os
 import pickle
 import fastText
+logging.info('1')
 import theano
+logging.info('2')
 import lasagne
-
+logging.info('3')
 import torch
+logging.info('4')
 from gensim.models import KeyedVectors
 
 from Semantic_Search.utils.GRAN_Model.GRAN import models
@@ -125,7 +132,7 @@ def load_GRAN_model():
     return {'model': model, 'words': words}
 
 if __name__ == '__main__':
-    execute_from_command_line(sys.argv)
     # load_InferSent_model()
     # load_GRAN_model()
     # print(dir(theano.config.dnn))
+    pass
