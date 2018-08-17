@@ -1,5 +1,6 @@
 Semantic_Search/models/
 Semantic_Search/__pycache__/
+Semantic_search/utils/__pycache__/
 .idea/
 db.sqlite3
 *.pyc
