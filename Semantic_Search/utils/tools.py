@@ -36,6 +36,7 @@ def split_by_capital(phase):
         splits = [phase[0:phase.find(splits[0])]] + splits if len(splits) > 0 else [phase]
     return splits
 
+
 def split_phase(phase):
     splits = []
 
@@ -78,8 +79,6 @@ def split_phase(phase):
     splits = [word for word in splits if word not in STOPWORDS]
 
     return splits
-
-
 
 
 if __name__ == '__main__':
