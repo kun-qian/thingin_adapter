@@ -40,6 +40,9 @@ def split_by_capital(phase):
 def split_phase(phase):
     splits = []
 
+    if phase is None or len(phase) == 0:
+        return splits
+
     if '-' in phase:
         splits = phase.split('-')
     else:
