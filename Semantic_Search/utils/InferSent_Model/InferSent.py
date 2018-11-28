@@ -22,6 +22,7 @@
 
 import numpy as np
 import time
+import codecs
 
 import torch
 from torch.autograd import Variable
@@ -132,7 +133,7 @@ class InferSent(nn.Module):
         # create word_vec with k first w2v vectors
         k = 0
         word_vec = {}
-        with open(self.w2v_path) as f:
+        with open(self.w2v_path, 'r', encoding='utf-8') as f:
             for line in f:
                 word, vec = line.split(' ', 1)
                 if k <= K:
@@ -247,7 +248,7 @@ class InferSent(nn.Module):
             print('Speed : %.1f sentences/s (%s mode, bsize=%s)' % (
                     len(embeddings)/(time.time()-tic),
                     'gpu' if self.is_cuda() else 'cpu', bsize))
-        return embeddings
+        return embeddings.astype(np.float64)
 
     def visualize(self, sent, tokenize=True):
 

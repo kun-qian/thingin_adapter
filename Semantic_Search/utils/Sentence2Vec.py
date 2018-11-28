@@ -131,3 +131,25 @@ def gran_sentence2vec(sentence, model, method=GRAN_NAMES_METHOD):
     vec = model['model'].encoding_function(x1, m1)[0]
     vec = matutils.unitvec(vec)
     return vec
+
+'''
+# The following codes refer to Google USE model
+'''
+def use_sentence2vec(sentence, model, method=USE_NAMES_METHOD):
+    assert model is not None
+
+    splits = split_phase(sentence)
+
+    if len(splits) == 0:
+        logging.info('no word after split_phase in sentence: {} in model: {}!'.format(sentence, methods[method]))
+        return None
+
+    sent = ' '.join(splits)
+
+    #by USEEncoder
+    #vec = model([sent])
+
+    #by USEPredictor
+    vec = model.encode([sent])
+    vec = matutils.unitvec(vec[0])
+    return vec

@@ -19,6 +19,8 @@ Ladage 0.2 dev : pip install https://github.com/Lasagne/Lasagne/archive/master.z
 '''
 import logging
 
+from Semantic_Search.utils.USE_Model.use_predictor import USEPredictor
+
 logging.basicConfig(level=logging.INFO)
 import os
 import pickle
@@ -36,50 +38,12 @@ import config
 
 
 def load_model(method):
-    if method in [config.FASTTEXT_NAMES_METHOD, config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD]:
-        return load_FastText_model()
-    if method in [config.W2V_GOOGLE_NAMES_METHOD, config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD]:
-        return load_w2v_model()
+    if method in [config.USE_NAMES_METHOD]:
+        return load_USE_model()
     if method in [config.INFERSENT_NAMES_METHOD]:
         return load_InferSent_model()
     if method in [config.GRAN_NAMES_METHOD]:
         return load_GRAN_model()
-
-
-def load_w2v_model(model_path=w2v_model_path, model_choice='google'):
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    filename = os.path.join(model_path, w2v_model_files[0] if model_choice == 'google' else w2v_model_files[1])
-    model_dir = current_dir + filename
-
-    if not os.path.exists(model_dir):
-        logging.error('no w2v model file in:' + model_dir)
-        return None
-
-    if model_choice == 'google':
-        w2v_model = KeyedVectors.load_word2vec_format(model_dir, binary=True)
-    else:
-        w2v_model = KeyedVectors.load_word2vec_format(model_dir, binary=False)
-
-    logging.info('finished loading model for w2v vector of : ' + model_choice)
-
-    return w2v_model
-
-
-'''
-The following functions are for loading FastText models
-'''
-
-
-def load_FastText_model():
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    model_dir = current_dir + fasttext_model_filepath
-    if not os.path.exists(model_dir):
-        logging.error('no fastText model file in:' + fasttext_model_filepath)
-        return None
-    fmodel = fastText.load_model(model_dir)
-    logging.info('finished loading fastText model!')
-    return fmodel
-
 
 '''
 The following functions are for loading InferSent model
@@ -131,6 +95,24 @@ def load_GRAN_model():
     logging.info('GRAN model loaded')
 
     return {'model': model, 'words': words}
+
+
+'''
+The following functions are for loading Google USE model
+'''
+def load_USE_model(session=None):
+
+    #assert session is not None
+    #use_encoder = load_use_embed(use_model_path)
+
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    MODEL_PATH = current_dir + use_savedmodel_path
+
+    use_predictor = USEPredictor(MODEL_PATH)
+    logging.info('Google USE model loaded!')
+
+    return use_predictor
+
 
 
 if __name__ == '__main__':

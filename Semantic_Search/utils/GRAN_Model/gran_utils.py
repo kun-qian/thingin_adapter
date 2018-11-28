@@ -19,7 +19,7 @@ def lookupIDX(words,w):
 def get_wordmap(textfile):
     words={}
     We = []
-    f = open(textfile,'r')
+    f = open(textfile,'r+', encoding="utf-8")
     lines = f.readlines()
     for (n,i) in enumerate(lines):
         i=i.split()

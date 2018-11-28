@@ -16,6 +16,9 @@ infersent_wordvec_filepath = ['/../models/infersent_model/glove.840B.300d.txt',
 gran_model_filepath = '/../models/gran_model/gran.pickle'
 gran_wordvec_filepath = '/../models/gran_model/paragram_sl999_small.txt'
 
+'''use'''
+use_savedmodel_path = '/../models/use_model/0000001'
+
 '''
 #
 # parameters for weighted average vector algorithm

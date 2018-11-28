@@ -24,7 +24,7 @@ from config import *
 #     vector_u = None  # vector u for weighted avaerage word2vec
 
 
-def get_sentence_vector(sentence, method=W2V_GOOGLE_NAMES_METHOD):
+def get_sentence_vector(sentence, method=USE_NAMES_METHOD):
     '''
 
     :param sentence:
@@ -45,6 +45,10 @@ def get_sentence_vector(sentence, method=W2V_GOOGLE_NAMES_METHOD):
         vec = infersent_sentence2vec(sentence, model, method=INFERSENT_NAMES_METHOD, tokenize=True)
     elif 'name_vector_gran' in methods[method]:
         vec = gran_sentence2vec(sentence, model)
+    elif 'name_vector_use' in methods[method]:
+        vec = use_sentence2vec(sentence, model)
+
+
     return vec
 
 

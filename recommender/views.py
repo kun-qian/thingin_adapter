@@ -38,4 +38,7 @@ def get_recommendations(request):
             res['code'] = '400'
             res['res'] = 'no keyword'
 
+
+        print(mapping)
+
         return JsonResponse(res)

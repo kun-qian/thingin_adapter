@@ -106,5 +106,6 @@ for method in config.enabled_methods:
     # print(classes[:3])
 
     # write classes into local file for cache
+    print('write total {} classes into file: {}'.format(len(classes), cache_file))
     with open(cache_file, 'wb') as file:
         pickle.dump(classes, file)
