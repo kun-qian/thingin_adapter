@@ -1,13 +1,19 @@
-FROM python:3.6
+FROM  tensorflow/tensorflow:latest-py3
 
-WORKDIR /thingin_recommender
+WORKDIR /thingin_Adapter
 
 COPY . .
 
-RUN git clone https://github.com/facebookresearch/fastText.git \
-    && cd fastText \
-    && pip install . \
-    && pip install --trusted-host pypi.python.org -r requirements.txt
+RUN  apt-get update \
+     && apt-get -y install g++ \
+     && pip install Cython \
+     && pip install pybind11 \
+     && pip install gensim \
+     && pip install Theano \
+     && pip install https://github.com/Lasagne/Lasagne/archive/master.zip \
+     && pip install torch
+     && pip install Django \
+     && apt-get clean
 
 EXPOSE 8000
 

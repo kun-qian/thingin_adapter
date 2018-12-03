@@ -2,7 +2,6 @@ import time
 import re
 
 from gensim.utils import simple_preprocess
-from gensim.parsing.preprocessing import STOPWORDS
 
 import logging
 
@@ -78,8 +77,6 @@ def split_phase(phase):
 
     # and remove '_|-| '
     splits = [re.sub('_|-| |\(|\)', '', word) for word in splits]
-
-    #splits = [word for word in splits if word not in STOPWORDS]
 
     return splits
 

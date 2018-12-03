@@ -17,24 +17,24 @@ other requirements:
 Theano 1.0.2: pip install Theano
 Ladage 0.2 dev : pip install https://github.com/Lasagne/Lasagne/archive/master.zip
 '''
-import logging
 
-from Semantic_Search.utils.USE_Model.use_predictor import USEPredictor
 
-logging.basicConfig(level=logging.INFO)
+
 import os
 import pickle
-import fastText
 import theano
 import lasagne
 import torch
-from gensim.models import KeyedVectors
 
 from Semantic_Search.utils.GRAN_Model.GRAN import models
 from Semantic_Search.utils.GRAN_Model.gran_utils import get_wordmap
 from Semantic_Search.utils.InferSent_Model.InferSent import InferSent
+from Semantic_Search.utils.USE_Model.use_predictor import USEPredictor
 from Semantic_Search.utils.const import *
+
 import config
+
+logging.basicConfig(level=logging.INFO)
 
 
 def load_model(method):
