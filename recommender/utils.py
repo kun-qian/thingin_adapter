@@ -3,7 +3,11 @@
 from thingin_recommender import settings
 from config import SEPARATOR, KEY_VALUE_SEPARATOR
 import os
+import sys
 import pickle
+import logging
+
+logging.basicConfig(level=logging.INFO)
 from config import methods
 from Semantic_Search.DocSimWrapper import vecsim, get_sentence_vector
 
@@ -37,12 +41,23 @@ def get_recommendations_from_keywords2(keywords, top_n, threshold, method):
 def get_recommendations_from_keywords(keywords, top_n, threshold, method):
     d = dict()
     cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
-    with open(cache_file, 'rb') as file:
-        classes = pickle.load(file)
-    for keyword in keywords:
-        keyword_vec = get_sentence_vector(keyword, method)
-        d[keyword] = get_top_n_similar_classes(keyword_vec, classes, top_n, threshold)
-    return d
+    if os.path.exists(cache_file):
+        logging.info("opening the cache file")
+        try:
+            with open(cache_file, 'rb') as file:
+                classes = pickle.load(file)
+            for keyword in keywords:
+                keyword_vec = get_sentence_vector(keyword, method)
+                d[keyword] = get_top_n_similar_classes(keyword_vec, classes, top_n, threshold)
+            return d
+        except IOError:
+            pass
+        except:
+            # should not happen, just in case
+            logging.info("unexpected error when reading cache file: {}".format(sys.exc_info()[0]))
+    else:
+        logging.info("the cache file does not exist")
+        return d
 
 
 def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
