@@ -41,6 +41,7 @@ def get_recommendations_from_keywords2(keywords, top_n, threshold, method):
 def get_recommendations_from_keywords(keywords, top_n, threshold, method):
     d = dict()
     cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
+    cache_file = os.path.join('cache_files', cache_file)
     if os.path.exists(cache_file):
         logging.info("opening the cache file")
         try:
@@ -75,4 +76,4 @@ def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
 
 
 if __name__ == "__main__":
-    print(get_recommendations_from_keywords(['lunch', 'dinner']))
+    print(get_recommendations_from_keywords(['lunch', 'dinner'], 3, 0, 1))
