@@ -15,13 +15,13 @@ import config
 
 from django.core.wsgi import get_wsgi_application
 
-logging.info("loading models...")
+logging.info("start to load all enabled models... from wsgi.py")
 
 for enabled_method in config.enabled_methods:
     if config.models[enabled_method] is None:
         config.models[enabled_method] = load_model(enabled_method)
 
-logging.info("finish loading models...")
+logging.info("finish loading all models... in wsgi.py")
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thingin_recommender.settings")
 

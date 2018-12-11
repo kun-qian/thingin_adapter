@@ -41,7 +41,8 @@ def get_recommendations_from_keywords2(keywords, top_n, threshold, method):
 def get_recommendations_from_keywords(keywords, top_n, threshold, method):
     d = dict()
     cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
-    cache_file = os.path.join('cache_files', cache_file)
+    cache_file = os.path.join('recommender/cache_files', cache_file)
+    # print(cache_file)
     if os.path.exists(cache_file):
         logging.info("opening the cache file")
         try:
@@ -52,10 +53,10 @@ def get_recommendations_from_keywords(keywords, top_n, threshold, method):
                 d[keyword] = get_top_n_similar_classes(keyword_vec, classes, top_n, threshold)
             return d
         except IOError:
-            pass
+            logging.info("IO Error occurred when reading cache file ({})".format(cache_file))
         except:
             # should not happen, just in case
-            logging.info("unexpected error when reading cache file: {}".format(sys.exc_info()[0]))
+            logging.info("unexpected error ({}) when reading cache file ({})".format(sys.exc_info()[0], cache_file))
     else:
         logging.info("the cache file does not exist")
         return d
