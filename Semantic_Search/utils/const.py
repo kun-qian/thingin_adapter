@@ -13,6 +13,7 @@ gran_wordvec_filepath = '/../models/gran_model/paragram_sl999_small.txt'
 
 '''use'''
 use_savedmodel_path = '/../models/use_model/0000001'
+use_checkpoint_path = '/../models/use_model/usev3'
 
 
 import logging
