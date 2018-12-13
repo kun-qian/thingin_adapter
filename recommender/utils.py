@@ -45,18 +45,29 @@ def get_recommendations_from_keywords(keywords, top_n, threshold, method):
     # print(cache_file)
     if os.path.exists(cache_file):
         logging.info("opening the cache file")
+        classes = None
         try:
             with open(cache_file, 'rb') as file:
                 classes = pickle.load(file)
-            for keyword in keywords:
-                keyword_vec = get_sentence_vector(keyword, method)
-                d[keyword] = get_top_n_similar_classes(keyword_vec, classes, top_n, threshold)
-            return d
+            logging.info("cache file {} loaded".format(cache_file))
         except IOError:
             logging.info("IO Error occurred when reading cache file ({})".format(cache_file))
-        except:
-            # should not happen, just in case
+        except:  # should not happen, just in case
             logging.info("unexpected error ({}) when reading cache file ({})".format(sys.exc_info()[0], cache_file))
+
+        if classes is not None:
+            try:
+                for keyword in keywords:
+                    keyword_vec = get_sentence_vector(keyword, method)
+                    logging.info("getting top n similar classes for keyword({})".format(keyword))
+                    d[keyword] = get_top_n_similar_classes(keyword_vec, classes, top_n, threshold)
+                    logging.info("finishing get top n similar classes for keyword({})".format(keyword))
+                # return d
+            except:
+                logging.info("error ({}) occurred when generate vectors".format(str(sys.exc_info())))
+        else:
+            logging.info("classes read from pickle files are None")
+        return d
     else:
         logging.info("the cache file does not exist")
         return d
@@ -77,4 +88,4 @@ def get_top_n_similar_classes(vec, classes, n=30, threshold=0):
 
 
 if __name__ == "__main__":
-    print(get_recommendations_from_keywords(['lunch', 'dinner'], 3, 0, 1))
+    print(get_recommendations_from_keywords(['lunch', 'dinner'], 3, 0, 2))
