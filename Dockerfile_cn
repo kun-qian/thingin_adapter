@@ -1,0 +1,38 @@
+FROM  tensorflow/tensorflow:latest-py3
+
+MAINTAINER "kun.qian@orange.com"
+
+WORKDIR /thingin_Adapter
+
+COPY . .
+
+RUN sed -i 's/http:\/\/archive\.ubuntu\.com\/ubuntu\//http:\/\/mirrors\.163\.com\/ubuntu\//g' /etc/apt/sources.list
+
+RUN  apt-get update \
+     && apt-get -y install g++ \
+            nginx \
+            supervisor \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Cython \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pybind11 \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple gensim \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Theano \
+     && pip install https://github.com/Lasagne/Lasagne/archive/master.zip \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Django \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uWSGI \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple torch \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple nltk \
+     && apt-get clean \
+     && rm -rf /var/lib/apt/lists/*
+
+# setup all the configfiles
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+RUN rm /etc/nginx/sites-enabled/default
+RUN ln -s /thingin_Adapter/thingin_recommender_nginx.conf /etc/nginx/sites-enabled/
+RUN ln -s /thingin_Adapter/supervisor.conf /etc/supervisor/conf.d/
+
+EXPOSE 8000
+
+# CMD ["python", "manage.py", "runserver", "0:8000"]
+# CMD ["uwsgi", "--ini", "thingin_recommender_uwsgi.ini"]
+CMD ["supervisord", "-n"]
+

@@ -39,7 +39,7 @@ models = {INFERSENT_NAMES_METHOD: inferset_model,
           USE_NAMES_METHOD: use_model
           }
 
-enabled_methods = [INFERSENT_NAMES_METHOD, GRAN_NAMES_METHOD, USE_NAMES_METHOD]
+enabled_methods = [USE_NAMES_METHOD, INFERSENT_NAMES_METHOD, GRAN_NAMES_METHOD]
 
 DEBUG_ALGORITHM_TESTING = True  # code switch for algorithm accuracy testing or for thing'in
 
