@@ -4,8 +4,6 @@
 SEPARATOR = "***"
 KEY_VALUE_SEPARATOR = "$$$"
 
-
-
 '''
 #The old methods 1,2,3, 4, 6, 9 were depreciated
 # D2V_DM_NAMES_METHOD = 1
@@ -22,8 +20,7 @@ KEY_VALUE_SEPARATOR = "$$$"
 
 '''
 
-
-#new methods are reordered
+# new methods are reordered
 
 USE_NAMES_METHOD = 1
 INFERSENT_NAMES_METHOD = 2
@@ -32,7 +29,6 @@ GRAN_NAMES_METHOD = 3
 inferset_model = None
 gran_model = None
 use_model = None
-
 
 methods = {INFERSENT_NAMES_METHOD: 'sent2vec_name_vector_infersent',
            GRAN_NAMES_METHOD: 'sent2vec_name_vector_gran',
@@ -45,9 +41,7 @@ models = {INFERSENT_NAMES_METHOD: inferset_model,
 
 enabled_methods = [INFERSENT_NAMES_METHOD, GRAN_NAMES_METHOD, USE_NAMES_METHOD]
 
-
-
-DEBUG_ALGORITHM_TESTING = True# code switch for algorithm accuracy testing or for thing'in
+DEBUG_ALGORITHM_TESTING = True  # code switch for algorithm accuracy testing or for thing'in
 
 if __name__ == "__main__":
     print(models[USE_NAMES_METHOD])

@@ -18,8 +18,6 @@ Theano 1.0.2: pip install Theano
 Ladage 0.2 dev : pip install https://github.com/Lasagne/Lasagne/archive/master.zip
 '''
 
-
-
 import os
 import pickle
 import theano
@@ -29,6 +27,7 @@ import torch
 from Semantic_Search.utils.GRAN_Model.GRAN import models
 from Semantic_Search.utils.GRAN_Model.gran_utils import get_wordmap
 from Semantic_Search.utils.InferSent_Model.InferSent import InferSent
+from Semantic_Search.utils.USE_Model.use import load_use_embed
 from Semantic_Search.utils.USE_Model.use_predictor import USEPredictor
 from Semantic_Search.utils.const import *
 
@@ -44,6 +43,7 @@ def load_model(method):
         return load_InferSent_model()
     if method in [config.GRAN_NAMES_METHOD]:
         return load_GRAN_model()
+
 
 '''
 The following functions are for loading InferSent model
@@ -100,19 +100,23 @@ def load_GRAN_model():
 '''
 The following functions are for loading Google USE model
 '''
-def load_USE_model(session=None):
 
-    #assert session is not None
-    #use_encoder = load_use_embed(use_model_path)
+
+def load_USE_model(model_opiton=1, session=None):
+    # assert session is not None
+    # use_encoder = load_use_embed(use_model_path)
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    MODEL_PATH = current_dir + use_savedmodel_path
-
-    use_predictor = USEPredictor(MODEL_PATH)
-    logging.info('Google USE model loaded!')
+    if model_opiton == 1:
+        MODEL_PATH = current_dir + use_checkpoint_path
+        use_predictor = load_use_embed(MODEL_PATH)
+        logging.info('Google USE checkpoint model loaded!')
+    else:
+        MODEL_PATH = current_dir + use_savedmodel_path
+        use_predictor = USEPredictor(MODEL_PATH)
+        logging.info('Google USE conversion model loaded!')
 
     return use_predictor
-
 
 
 if __name__ == '__main__':

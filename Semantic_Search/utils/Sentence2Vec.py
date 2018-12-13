@@ -1,3 +1,5 @@
+import numpy as np
+
 from gensim import matutils
 
 from Semantic_Search.utils.GRAN_Model.gran_utils import get_seq
@@ -8,6 +10,8 @@ from config import *
 '''
 # The following codes refer to InferSent model
 '''
+
+
 def infersent_sentence2vec(sentence, model, method=INFERSENT_NAMES_METHOD, tokenize=True):
     assert model is not None
 
@@ -27,6 +31,8 @@ def infersent_sentence2vec(sentence, model, method=INFERSENT_NAMES_METHOD, token
 '''
 # The following codes refer to GRAN model
 '''
+
+
 def gran_sentence2vec(sentence, model, method=GRAN_NAMES_METHOD):
     assert model is not None
 
@@ -49,9 +55,12 @@ def gran_sentence2vec(sentence, model, method=GRAN_NAMES_METHOD):
     vec = matutils.unitvec(vec)
     return vec
 
+
 '''
 # The following codes refer to Google USE model
 '''
+
+
 def use_sentence2vec(sentence, model, method=USE_NAMES_METHOD):
     assert model is not None
 
@@ -63,10 +72,12 @@ def use_sentence2vec(sentence, model, method=USE_NAMES_METHOD):
 
     sent = ' '.join(splits)
 
-    #by USEEncoder
-    #vec = model([sent])
+    # by USEEncoder
+    vec = model([sent]).astype(np.float64)
 
-    #by USEPredictor
-    vec = model.encode([sent])
+    # by USEPredictor
+    # vec = model.encode([sent])
+
     vec = matutils.unitvec(vec[0])
+
     return vec

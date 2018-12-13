@@ -39,6 +39,7 @@ def get_recommendations_from_keywords(keywords, top_n, threshold, method):
     cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
     with open(cache_file, 'rb') as file:
         classes = pickle.load(file)
+    print('Thingin cache loaded, to start calculate the sentence vector by method: {}'.format(methods[method]))
     for keyword in keywords:
         keyword_vec = get_sentence_vector(keyword, method)
         d[keyword] = get_top_n_similar_classes(keyword_vec, classes, top_n, threshold)
