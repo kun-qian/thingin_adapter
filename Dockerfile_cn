@@ -21,6 +21,7 @@ RUN  apt-get update \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uWSGI \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple torch \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple nltk \
+     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple tensorflow-hub \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
 

@@ -19,6 +19,7 @@ RUN  apt-get update \
      && pip install uWSGI \
      && pip install torch \
      && pip install nltk \
+     && pip install tensorflow-hub \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
 
