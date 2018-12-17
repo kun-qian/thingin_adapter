@@ -6,7 +6,7 @@ WORKDIR /thingin_Adapter
 
 COPY . .
 
-RUN sed -i 's/http:\/\/archive\.ubuntu\.com\/ubuntu\//http:\/\/mirrors\.163\.com\/ubuntu\//g' /etc/apt/sources.list
+RUN sed -i 's/http:\/\/archive\.ubuntu\.com\/ubuntu\//http:\/\/mirrors\.aliyun\.com\/ubuntu\//g' /etc/apt/sources.list
 
 RUN  apt-get update \
      && apt-get -y install g++ \
@@ -15,8 +15,6 @@ RUN  apt-get update \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Cython \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pybind11 \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple gensim \
-     && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Theano \
-     && pip install https://github.com/Lasagne/Lasagne/archive/master.zip \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Django \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uWSGI \
      && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple torch \

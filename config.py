@@ -24,22 +24,18 @@ KEY_VALUE_SEPARATOR = "$$$"
 
 USE_NAMES_METHOD = 1
 INFERSENT_NAMES_METHOD = 2
-GRAN_NAMES_METHOD = 3
 
 inferset_model = None
-gran_model = None
 use_model = None
 
 methods = {INFERSENT_NAMES_METHOD: 'sent2vec_name_vector_infersent',
-           GRAN_NAMES_METHOD: 'sent2vec_name_vector_gran',
            USE_NAMES_METHOD: 'sent2vec_name_vector_use'}
 
 models = {INFERSENT_NAMES_METHOD: inferset_model,
-          GRAN_NAMES_METHOD: gran_model,
           USE_NAMES_METHOD: use_model
           }
 
-enabled_methods = [USE_NAMES_METHOD, INFERSENT_NAMES_METHOD, GRAN_NAMES_METHOD]
+enabled_methods = [USE_NAMES_METHOD, INFERSENT_NAMES_METHOD]
 
 DEBUG_ALGORITHM_TESTING = True  # code switch for algorithm accuracy testing or for thing'in
 

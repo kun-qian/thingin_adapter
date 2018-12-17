@@ -19,19 +19,12 @@ Ladage 0.2 dev : pip install https://github.com/Lasagne/Lasagne/archive/master.z
 '''
 
 import os
-import pickle
-import theano
-import lasagne
 import torch
-
-from Semantic_Search.utils.GRAN_Model.GRAN import models
-from Semantic_Search.utils.GRAN_Model.gran_utils import get_wordmap
+import config
 from Semantic_Search.utils.InferSent_Model.InferSent import InferSent
 from Semantic_Search.utils.USE_Model.use import load_use_embed
 from Semantic_Search.utils.USE_Model.use_predictor import USEPredictor
 from Semantic_Search.utils.const import *
-
-import config
 
 logging.basicConfig(level=logging.INFO)
 
@@ -41,8 +34,6 @@ def load_model(method):
         return load_USE_model()
     if method in [config.INFERSENT_NAMES_METHOD]:
         return load_InferSent_model()
-    if method in [config.GRAN_NAMES_METHOD]:
-        return load_GRAN_model()
 
 
 '''
@@ -70,31 +61,6 @@ def load_InferSent_model():
     logging.info('finished building InferSent vocabulary !')
 
     return infersent
-
-
-'''
-The following functions are for loading GRAN model
-'''
-
-
-def load_GRAN_model():
-    theano.config.dnn.enabled = 'False'
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-
-    params = {'dropout': 0.0, 'word_dropout': 0.0, 'model': 'gran', 'outgate': True, 'gran_type': 1,
-              'dim': 300, 'sumlayer': False}
-
-    W2V_PATH = current_dir + gran_wordvec_filepath
-    (words, We) = get_wordmap(W2V_PATH)
-    model = models(We, params)
-    MODEL_PATH = current_dir + gran_model_filepath
-    base_params = pickle.load(open(MODEL_PATH, 'rb'), encoding='iso-8859-1')
-    lasagne.layers.set_all_param_values(model.final_layer, base_params)
-
-    logging.info('GRAN model loaded')
-
-    return {'model': model, 'words': words}
 
 
 '''

@@ -7,14 +7,9 @@ infersent_version = 2
 infersent_wordvec_filepath = ['/../models/infersent_model/glove.840B.300d.txt',
                               '/../models/infersent_model/crawl-300d-2M.vec']
 
-'''gran'''
-gran_model_filepath = '/../models/gran_model/gran.pickle'
-gran_wordvec_filepath = '/../models/gran_model/paragram_sl999_small.txt'
-
 '''use'''
 use_savedmodel_path = '/../models/use_model/0000001'
 use_checkpoint_path = '/../models/use_model/usev3'
-
 
 import logging
 import sys
