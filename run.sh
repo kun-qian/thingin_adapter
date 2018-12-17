@@ -13,7 +13,7 @@ LOG=$BASE"thingin_recommender.log"
 #echo $CACHES
 #echo $LOG
 
-if [[ ! "$(docker ps -a -f name=thingin_adapter)" ]]; then
+if [[ ! "$(docker ps -f name=thingin_adapter)" ]]; then
     if [[ "$(docker ps -aq -f status=exited -f name=thingin_adapter)" ]]; then
         # cleanup
         echo "container exited, remove the container"
