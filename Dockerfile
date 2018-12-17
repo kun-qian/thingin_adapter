@@ -13,8 +13,6 @@ RUN  apt-get update \
      && pip install Cython \
      && pip install pybind11 \
      && pip install gensim \
-     && pip install Theano \
-     && pip install https://github.com/Lasagne/Lasagne/archive/master.zip \
      && pip install Django \
      && pip install uWSGI \
      && pip install torch \
