@@ -1,8 +1,3 @@
-'''gensim Word2Vec'''
-w2v_model_path = '/../models/w2v_model/'
-w2v_model_files = ['GoogleNews-vectors-negative300.bin', 'glove.twitter.27B.200d.w2v.txt']
-w2v_model_choice = 'google'  # or 'glove'
-
 '''fastText'''
 fasttext_model_filepath = '/../models/fasttext/wiki.en.bin'
 
@@ -12,17 +7,9 @@ infersent_version = 2
 infersent_wordvec_filepath = ['/../models/infersent_model/glove.840B.300d.txt',
                               '/../models/infersent_model/crawl-300d-2M.vec']
 
-'''gran'''
-gran_model_filepath = '/../models/gran_model/gran.pickle'
-gran_wordvec_filepath = '/../models/gran_model/paragram_sl999_small.txt'
-
-'''
-#
-# parameters for weighted average vector algorithm
-#
-'''
-vector_u_cache_file = 'vector_u_for_{}.pkl'
-coefficient_a = 1e-3
+'''use'''
+use_savedmodel_path = '/../models/use_model/0000001'
+use_checkpoint_path = '/../models/use_model/usev3'
 
 import logging
 import sys

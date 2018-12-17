@@ -2,7 +2,6 @@ import time
 import re
 
 from gensim.utils import simple_preprocess
-from gensim.parsing.preprocessing import STOPWORDS
 
 import logging
 
@@ -40,6 +39,9 @@ def split_by_capital(phase):
 def split_phase(phase):
     splits = []
 
+    if phase is None or len(phase) == 0:
+        return splits
+
     if '-' in phase:
         splits = phase.split('-')
     else:
@@ -75,8 +77,6 @@ def split_phase(phase):
 
     # and remove '_|-| '
     splits = [re.sub('_|-| |\(|\)', '', word) for word in splits]
-
-    splits = [word for word in splits if word not in STOPWORDS]
 
     return splits
 

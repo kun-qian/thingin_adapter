@@ -27,10 +27,6 @@ logging.info("loading models...")
 for method in config.enabled_methods:
     if config.models[method] is None:
         config.models[method] = load_model(method)
-    if method == config.FASTTEXT_NAMES_METHOD and config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD in config.enabled_methods:
-        config.models[config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD] = config.models[method]
-    if method == config.W2V_GOOGLE_NAMES_METHOD and config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD in config.enabled_methods:
-        config.models[config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD] = config.models[method]
 logging.info("finish loading models...")
 
 from Semantic_Search.DocSimWrapper import get_sentence_vector
@@ -106,5 +102,6 @@ for method in config.enabled_methods:
     # print(classes[:3])
 
     # write classes into local file for cache
+    print('write total {} classes into file: {}'.format(len(classes), cache_file))
     with open(cache_file, 'wb') as file:
         pickle.dump(classes, file)
