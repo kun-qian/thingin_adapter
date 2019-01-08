@@ -27,7 +27,7 @@ def get_recommendations(request):
         threshold = params.get('threshold', 0)
         method = params.get('method', 5)
         if method not in enabled_methods:
-            res['code'] = '401'
+            res['code'] = 401
             res['res'] = 'method {} is not available any more'.format(method)
             return JsonResponse(res)
         if keywords is not None and len(keywords) > 0:
@@ -35,7 +35,7 @@ def get_recommendations(request):
             res['code'] = 200
             res['res'] = mapping
         else:
-            res['code'] = '400'
+            res['code'] = 400
             res['res'] = 'no keyword'
 
         return JsonResponse(res)
