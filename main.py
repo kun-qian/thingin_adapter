@@ -2,16 +2,16 @@ import logging
 import os
 import pickle
 import re
+
 import requests
 
-from Semantic_Search.utils.SIF_Model.SIF import load_vector_u, cal_vector_u
-from Semantic_Search.utils.preprocess import load_model
 import config
+from Semantic_Search.utils.preprocess import load_model
 from config import *
 
 logging.basicConfig(level=logging.INFO)
 
-# os.environ['http_proxy'] = 'http://10.193.250.16:8080/'
+os.environ['http_proxy'] = 'http://openwatt-proxy-np.itn.ftgroup:8080'
 # os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
 
 # only run onece to download the NLTK data for tokenizer
@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 USE_CACHED_VECTOR = False
-CACHE_FILE_BASIC_NAME = 'cached_classes_name_IRI_vector_method_{}.pkl'
+CACHE_FILE_BASIC_NAME = 'recommender/cache_files/cached_classes_name_IRI_vector_method_{}.pkl'
 
 logging.info("loading models...")
 for method in config.enabled_methods:
@@ -33,12 +33,80 @@ from Semantic_Search.DocSimWrapper import get_sentence_vector
 
 
 def is_similarity_by_name(method=None):
-    # if method in [1, 3, 5, 7, 9]:
-    #     return True
-    # else:
-    #     return False
     return True
 
+
+def retrieve_all_classes(include_fields):
+    if not include_fields or len(include_fields) == 0:
+        return None
+    # this request can get almost 10000 classes
+    try:
+        path = "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?scrollPagination&includeFields="
+        for field in include_fields:
+            path += (field + "%2C")
+        path += "&limit=10000"
+        logging.info("the path getting first 10000 classes is: {}".format(path))
+        r = requests.get(path, timeout=20)
+    except requests.exceptions.RequestException:
+        logging.info("IO error when retrieving classes from thingin")
+        return None
+    except requests.exceptions.ConnectTimeout:
+        logging.info("timeout when retrieving classes from thingin")
+        return None
+    except:
+        logging.info("unknown error when retrieving classes from thingin")
+        return None
+    finally:
+        pass
+
+    thingin_classes = r.json()
+
+    # get rest classes
+    headers = r.headers
+    next_offset = headers.get("x-next-offset", "")
+    logging.info("the next offset is: {}".format(next_offset))
+    if next_offset != "":
+
+        base = "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies?scrollPagination&offset="
+        base += next_offset
+        while 1:
+            try:
+                r = requests.get(base, timeout=20)
+            except requests.exceptions.RequestException:
+                logging.info("request exception when keep retrieving rest classes")
+                break
+            except requests.exceptions.ConnectTimeout:
+                logging.info("timeout when keep retrieving rest classes")
+                break
+            except:
+                break
+            finally:
+                pass
+            if r.status_code == 200:
+                # logging.info("the response is: {}, and type is: {}".format(str(r.json()), type(r.json())))
+                if isinstance(r.json(), list) and len(r.json()) > 0:
+                    thingin_classes += r.json()
+                else:
+                    break
+            else:
+                break
+    logging.info("the final thingin classes length is: {}".format(len(thingin_classes)))
+    if len(thingin_classes) > 0:
+        filtered_keywords = 'command|notification|functionality|function|unit|system|status|state|scheme|fragment|package' \
+                            '|specification'
+        thingin_classes = [c for c in thingin_classes if
+                           len(re.findall(filtered_keywords, c['data']['name'].lower())) == 0]
+        return thingin_classes
+    return None
+
+
+if not USE_CACHED_VECTOR:
+    classes = retrieve_all_classes(['iri', 'name', 'comment'])
+    if not classes or len(classes) == 0:
+        logging.info("no classes getted from thingin")
+        exit()
+    logging.info("the first classes: {}".format(str(classes[0])))
+    logging.info("the last classes: {}".format(str(classes[-1])))
 
 for method in config.enabled_methods:
     cache_file = CACHE_FILE_BASIC_NAME.format(methods[method])
@@ -52,26 +120,6 @@ for method in config.enabled_methods:
                 if classes[i]['name'] == 'Tricam':
                     print(i)
     else:
-        try:
-            # retrieve classes with comments
-            if not is_similarity_by_name(method):
-                r = requests.get(
-                    "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
-                    "iri%2Cname%2Ccomment&limit=10000")
-            else:  # retrieve classes just with name
-                r = requests.get(
-                    "http://ziggy-dev-ols.nprpaas.ddns.integ.dns-orange.fr/api/v1/ontologies/classes?includeFields="
-                    "iri%2Cname&limit=10000")
-            logging.info("received %s classes from thingin!" % len(r.json()))
-        except requests.RequestException:
-            logging.info("can't get info from thingin!")
-            exit()
-
-        classes = r.json()
-        filtered_keywords = 'command|notification|functionality|function|unit|system|status|state|scheme|fragment|package' \
-                            '|specification'
-        classes = [c for c in classes if len(re.findall(filtered_keywords, c['data']['name'].lower())) == 0]
-
         # if consider the comments similarity, remove classes without comments
         if not is_similarity_by_name(method):
             classes = [c for c in classes if 'comment' in c['data'].keys()]
@@ -79,29 +127,26 @@ for method in config.enabled_methods:
                 c['data']['comment'] = re.sub('\n|\r', ' ', c['data']['comment'][0])
                 # print(classes[0])
 
-        # remove duplicate iri class
-        classes = [dict(element) for element in set([tuple(c['data'].items()) for c in classes])]
-
-    data_key = 'name' if is_similarity_by_name() else 'comment'
-
-    # build the cache of vector_u for weighted average vector methods
-    if method in [config.WEIGHTED_W2V_FASTTEXT_NAMES_METHOD, config.WEIGHTED_W2V_GOOGLE_NAMES_METHOD]:
-        vec_u = load_vector_u(method)
-        if vec_u is None:
-            all_sentences = (c[data_key] for c in classes)
-            all_sentences = list(set(all_sentences))
-            vec_u = cal_vector_u(all_sentences, models[method], method)
-        vectors_u[method] = vec_u
-
-    for c in classes:
-        if data_key not in c.keys():
-            c['vec'] = None
         else:
-            vector = get_sentence_vector(c[data_key], method)
-            c['vec'] = vector
-    # print(classes[:3])
+            # remove 'comment' field
+            for c in classes:
+                c['data'].pop('comment', None)
 
-    # write classes into local file for cache
-    print('write total {} classes into file: {}'.format(len(classes), cache_file))
-    with open(cache_file, 'wb') as file:
-        pickle.dump(classes, file)
+        # remove duplicate iri class
+        # print(classes)
+        final_classes = [dict(element) for element in tuple({tuple(c['data'].items()) for c in classes})]
+        # print(classes)
+
+        data_key = 'name' if is_similarity_by_name() else 'comment'
+
+        for c in final_classes:
+            if data_key not in c.keys():
+                c['vec'] = None
+            else:
+                vector = get_sentence_vector(c[data_key], method)
+                c['vec'] = vector
+        # logging.info("the first 3 classes: {}".format(classes[:3]))
+        # write classes into local file for cache
+        print('write total {} classes into file: {}'.format(len(final_classes), cache_file))
+        with open(cache_file, 'wb') as file:
+            pickle.dump(final_classes, file)
