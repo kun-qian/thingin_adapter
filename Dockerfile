@@ -1,4 +1,4 @@
-FROM  tensorflow/tensorflow:latest-py3
+FROM  tensorflow/tensorflow:1.12.0-py3
 
 MAINTAINER "kun.qian@orange.com"
 
