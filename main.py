@@ -11,7 +11,7 @@ from config import *
 
 logging.basicConfig(level=logging.INFO)
 
-os.environ['http_proxy'] = 'http://openwatt-proxy-np.itn.ftgroup:8080'
+# os.environ['http_proxy'] = 'http://openwatt-proxy-np.itn.ftgroup:8080'
 # os.environ['https_proxy'] = 'http://10.193.250.16:8080/'
 
 # only run onece to download the NLTK data for tokenizer

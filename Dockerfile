@@ -6,8 +6,8 @@ WORKDIR /thingin_Adapter
 
 COPY . .
 
-ARG http_proxy
-ARG https_proxy
+#ARG http_proxy
+#ARG https_proxy
 
 RUN  apt-get update \
      && apt-get -y install g++ \
